@@ -30,11 +30,15 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+    DatabaseHelper myDb;
 
     private TextView mTextViewResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // create a DB
+        myDb = new DatabaseHelper(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
