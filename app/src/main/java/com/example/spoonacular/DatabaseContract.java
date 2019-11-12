@@ -5,22 +5,6 @@ import android.provider.BaseColumns;
 public final class DatabaseContract {
     public static final  int    DATABASE_VERSION   = 1;
     public static final  String DATABASE_NAME      = "spoonacular.db";
-    public static final  String CREATE_DB          = Recipe.CREATE_TABLE + " " +
-                                                     Step.CREATE_TABLE + " " +
-                                                     Ingredient.CREATE_TABLE + " " +
-                                                     Ingredient_Recipe.CREATE_TABLE + " " +
-                                                     User.CREATE_TABLE + " " +
-                                                     User_Recipe.CREATE_TABLE + " " +
-                                                     Keyword.CREATE_TABLE + " " +
-                                                     Keyword_Recipe.CREATE_TABLE;
-    public static final  String DELETE_DB          = Recipe.DELETE_TABLE + " " +
-                                                     Step.DELETE_TABLE + " " +
-                                                     Ingredient.DELETE_TABLE + " " +
-                                                     Ingredient_Recipe.DELETE_TABLE + " " +
-                                                     User.DELETE_TABLE + " " +
-                                                     User_Recipe.DELETE_TABLE + " " +
-                                                     Keyword.DELETE_TABLE + " " +
-                                                     Keyword_Recipe.DELETE_TABLE;
 
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.

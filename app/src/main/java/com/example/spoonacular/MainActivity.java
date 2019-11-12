@@ -3,6 +3,7 @@ package com.example.spoonacular;
 import android.os.Bundle;
 import android.view.textclassifier.TextLinks;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -116,15 +117,25 @@ public class MainActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
-
                         }
                     });
                 }
             }
         });
+    }
 
+    public void AddData(String newEntry) {
+        boolean insertData = myDb.addData(newEntry);
 
+        if(insertData){
+            toastMessage("Data successfully inserted");
+        }else{
+            toastMessage("Data failed to be inserted");
+        }
+    }
+
+    private void toastMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 }
