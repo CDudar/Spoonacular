@@ -2,6 +2,7 @@ package com.example.spoonacular;
 
 import android.os.Bundle;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.textclassifier.TextLinks;
@@ -24,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -68,7 +70,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
 
-        //loadFragment(new AccountFragment());
+        navView.setSelectedItemId(R.id.navigation_search);
+        swapFragments(R.id.navigation_search, "search");
 
     }
 
@@ -85,30 +88,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
-
-/*    private boolean loadFragment(Fragment fragment){
-
-        System.out.println(getSupportFragmentManager().getFragments().size());
-
-        if(fragment.isDetached())
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .attach(fragment)
-                    .commit();
-
-        else if(fragment != null){
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName())
-                 //   .addToBackStack(fragment.getClass().getSimpleName())
-                    .commit();
-            return true;
-        }
-        return false;
-
-    }*/
 
 
     @Override
@@ -187,27 +166,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
 
-/*
-    public void onClick(View v){
-        switch(v.getId()){
 
-            case R.id.button:
-                System.out.println("is txt null22222?");
-                //System.out.println(txt == null);
-                searchFrag.getTextV().append("y");
+    public void onFragmentSubmission(String string){
+        //if entered string in ingredients
+        System.out.println("user submitted " + string.toString());
 
+        TextView tv = new TextView(getApplicationContext());
+        tv.setText(string);
+        tv.setPadding(20, 5, 0, 0);
+        tv.setGravity(Gravity.CENTER | Gravity.CENTER);
 
-        }
-    }*/
+        searchFrag.getQueriedIngredientsLayout().addView(tv);
+
+    }
 
     @Override
     public void onFragmentInteraction(String string) {
-        //listened
-       System.out.println("listening...");
-       searchFrag.txt.append("y");
+        System.out.println("User entering " + string.toString());
 
-        // mSearchString = string;
-      //  focusSearView();
+
     }
 
 

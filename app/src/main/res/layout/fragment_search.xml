@@ -3,29 +3,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="585dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="146dp"
+        android:background="@drawable/border">
 
-    <TextView
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"></TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_centerVertical="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:text="test" />
+    <SearchView
+        android:id="@+id/search"
+        android:layout_width="311dp"
+        android:layout_height="68dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="23dp"
+        android:gravity="center"
+        android:hint="Search by ingredients..."
+        android:textSize="24sp" />
 
-    <TextView
-        android:id="@+id/num"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:freezesText="true"/>
+    <HorizontalScrollView
+        android:id="@+id/queriedIngredients"
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="102dp"
+        android:background="@drawable/border">
+
+        <LinearLayout
+            android:id="@+id/queriedIngredientsLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="20dp"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
 
 </RelativeLayout>

@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,13 +24,13 @@ import org.w3c.dom.Text;
 import java.io.Serializable;
 import java.util.List;
 
-public class SearchFragment extends Fragment implements View.OnClickListener{
+public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener, View.OnClickListener {
 
 
     View rootView;
-    Button button;
-    TextView txt;
-
+    SearchView search;
+    HorizontalScrollView queriedIngredients;
+    LinearLayout queriedIngredientsLayout;
     private InteractionListener mListener;
 
     @Override
@@ -48,23 +51,23 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
 
-        button = (Button) (rootView.findViewById(R.id.button));
-        button.setOnClickListener(this);
 
-        System.out.println("new txt created");
-        txt = (TextView) (rootView.findViewById(R.id.num));
-        txt.setText(txt.getText());
-        System.out.println("oncreateview");
-        if(savedInstanceState != null){
-       //     button = (Button) savedInstanceState.getSerializable("button");
-            System.out.println("restoring");
-            txt = (TextView) (rootView.findViewById(R.id.num));
-            txt.setText(savedInstanceState.getString("txt"));
-        }
-
-
-
+        System.out.println("Created search Fragment");
+        search = rootView.findViewById(R.id.search);
+        search.setOnQueryTextListener(this);
+        queriedIngredients = rootView.findViewById(R.id.queriedIngredients);
+        queriedIngredientsLayout = rootView.findViewById((R.id.queriedIngredientsLayout));
         return rootView;
+    }
+
+    public boolean onQueryTextSubmit(String newText) {
+        mListener.onFragmentSubmission(newText);
+        return false;
+    }
+
+    public boolean onQueryTextChange(String newText) {
+        mListener.onFragmentInteraction(newText);
+        return false;
     }
 
     public void onAttach(Context context) {
@@ -79,34 +82,27 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    public void onClick(View v){
+    public void onClick(View v) {
         mListener.onFragmentInteraction("hi");
-
-     //   switch(v.getId()){
-
-        //    case R.id.button:
-        //        System.out.println("is txt null22222?");
-       //         System.out.println(txt == null);
-       //         txt.append("y");
-
-
-      //  }
     }
 
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         System.out.println("savingg");
-        //outState.put("button",(Serializable) button);
-        outState.putString( "txt", txt.getText().toString());
-
     }
 
-    public TextView getTextV(){
-        return txt;
+    public View getQueriedIngredients() {
+        return queriedIngredients;
     }
 
-
+    public LinearLayout getQueriedIngredientsLayout(){
+        return queriedIngredientsLayout;
+    }
 }
+
+
+
+
 
 
 
