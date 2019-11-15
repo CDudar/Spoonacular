@@ -1,13 +1,19 @@
 package com.example.spoonacular;
 
 import android.os.Bundle;
+import android.util.SparseArray;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.textclassifier.TextLinks;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.spoonacular.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -30,98 +36,40 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
     DatabaseHelper myDb;
+
+
+    int currentSelectedItemId;
+    private SparseArray<Fragment.SavedState> savedStates = new SparseArray<Fragment.SavedState>();
+
+    SearchFragment searchFrag;
+    AccountFragment accountFrag;
+    //Fragment favoritesFrag;
+
+
 
     private TextView mTextViewResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // create a DB
-        myDb = new DatabaseHelper(this);
+      //  myDb = new DatabaseHelper(this);
+
+        System.out.println("running again");
 
         super.onCreate(savedInstanceState);
+
+    if(savedInstanceState != null){
+        searchFrag = (SearchFragment) getSupportFragmentManager().getFragment(savedInstanceState, "search");
+    }
+
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
+        navView.setOnNavigationItemSelectedListener(this);
 
+        //loadFragment(new AccountFragment());
 
-        System.out.println("about to call");
-
-        mTextViewResult = findViewById(R.id.text_view_result);
-
-        OkHttpClient client = new OkHttpClient();
-
-        //String url = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=apples,+flour,+sugar&number=2";
-          String url = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=apples,+flour,+sugar&number=2&apiKey=db9a577a695640528bb7a67487f8a907";
-
-      //  String url = "https://www.spoonacular.com";
-      //  RequestBody formBody = new FormBody.Builder()
-       //         .add("apiKey", "db9a577a695640528bb7a67487f8a907")
-       //         .build();
-
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        System.out.println(request.toString());
-
-        System.out.println("before req");
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-                System.out.println("failxx");
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if(response.isSuccessful()){
-                    final String myResponse = response.body().string();
-
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.print("got here");
-                            try {
-
-                                JSONArray jsonArr = new JSONArray(myResponse);
-
-                                for(int i = 0; i < jsonArr.length(); i++){
-                                    JSONObject currObj = jsonArr.getJSONObject(i);
-                                    Iterator<String> iter = currObj.keys();
-                                    while(iter.hasNext()){
-                                        String key = iter.next();
-                                        try{
-                                            Object value = currObj.get(key);
-                                            String currPair = "key: " + key.toString() + "value: " + value.toString();
-                                            System.out.println(currPair);
-                                            mTextViewResult.setText(currPair);
-                                        }
-                                        catch(JSONException e){
-                                            e.printStackTrace();
-                                        }
-
-                                    }
-                                }
-                              //  JSONObject id = mainObject.getJSONObject("id");
-                               // System.out.println(id.toString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
 
     public void AddData(String newEntry) {
@@ -137,5 +85,132 @@ public class MainActivity extends AppCompatActivity {
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+
+/*    private boolean loadFragment(Fragment fragment){
+
+        System.out.println(getSupportFragmentManager().getFragments().size());
+
+        if(fragment.isDetached())
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .attach(fragment)
+                    .commit();
+
+        else if(fragment != null){
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName())
+                 //   .addToBackStack(fragment.getClass().getSimpleName())
+                    .commit();
+            return true;
+        }
+        return false;
+
+    }*/
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        Fragment fragment = null;
+
+
+        switch(menuItem.getItemId()){
+            case R.id.navigation_account:
+                swapFragments(menuItem.getItemId(), "account");
+                break;
+
+            case R.id.navigation_search:
+                swapFragments(menuItem.getItemId(), "search");
+                break;
+
+            case R.id.navigation_favorites:
+                swapFragments(menuItem.getItemId(), "favorites");
+                break;
+        }
+
+        return true;
+    }
+
+
+    public void swapFragments(int itemId, String tag){
+        if(getSupportFragmentManager().findFragmentByTag("tag") == null){
+            saveCurrentFragmentState(itemId);
+            createFragment(tag, itemId);
+        }
+    }
+
+
+    public void createFragment(String tag, int itemId){
+        Fragment fragment =  null;
+        if(tag == "account"){
+            if(accountFrag == null)
+                accountFrag = new AccountFragment();
+            fragment = accountFrag;
+        }
+        else if(tag == "search"){
+            if(searchFrag == null)
+                searchFrag = new SearchFragment();
+            fragment = searchFrag ;
+        }
+        else if(tag == "favorites"){
+            fragment = new FavoritesFragment();
+        }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment, tag)
+                .commit();
+    }
+
+    public void saveCurrentFragmentState(int itemId){
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+        if(currentFragment != null){
+            System.out.println(currentFragment.getClass().getSimpleName());
+            System.out.println(currentFragment.hashCode());
+           getSupportFragmentManager().saveFragmentInstanceState(currentFragment);
+
+        }
+        currentSelectedItemId = itemId;
+
+    }
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        System.out.println("saving in activity");
+        getSupportFragmentManager().putFragment(outState, "search", searchFrag);
+    }
+
+
+/*
+    public void onClick(View v){
+        switch(v.getId()){
+
+            case R.id.button:
+                System.out.println("is txt null22222?");
+                //System.out.println(txt == null);
+                searchFrag.getTextV().append("y");
+
+
+        }
+    }*/
+
+    @Override
+    public void onFragmentInteraction(String string) {
+        //listened
+       System.out.println("listening...");
+       searchFrag.txt.append("y");
+
+        // mSearchString = string;
+      //  focusSearView();
+    }
+
+
+
 
 }

@@ -9,17 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.spoonacular.R;
-
-public class SearchFragment extends Fragment {
+public class AccountFragment extends Fragment {
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, null);
-
-
-
+        return inflater.inflate(R.layout.fragment_account, null);
     }
 }
