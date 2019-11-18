@@ -39,12 +39,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
-    DatabaseHelper myDb;
-
 
     int currentSelectedItemId;
     private SparseArray<Fragment.SavedState> savedStates = new SparseArray<Fragment.SavedState>();
 
+    DatabaseHelper myDb;
     SearchFragment searchFrag;
     AccountFragment accountFrag;
     //Fragment favoritesFrag;
@@ -55,16 +54,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // create a DB
-      //  myDb = new DatabaseHelper(this);
 
         System.out.println("running again");
 
         super.onCreate(savedInstanceState);
 
-    if(savedInstanceState != null){
-        searchFrag = (SearchFragment) getSupportFragmentManager().getFragment(savedInstanceState, "search");
-    }
+        if(savedInstanceState != null){
+            searchFrag = (SearchFragment) getSupportFragmentManager().getFragment(savedInstanceState, "search");
+        }
 
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -73,8 +70,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navView.setSelectedItemId(R.id.navigation_search);
         swapFragments(R.id.navigation_search, "search");
 
+        // create a DB
+        myDb = new DatabaseHelper(this);
+
     }
 
+    /*
     public void AddData(String newEntry) {
         boolean insertData = myDb.addData(newEntry);
 
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             toastMessage("Data failed to be inserted");
         }
     }
+     */
 
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

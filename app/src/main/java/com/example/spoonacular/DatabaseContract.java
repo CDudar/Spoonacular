@@ -23,7 +23,7 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
-
+/*
     public static class Step implements BaseColumns {
         public static final String TABLE_NAME = "step";
         public static final String STEP_NO = "step_no";
@@ -41,6 +41,7 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
+*/
 
     public static class Ingredient implements BaseColumns {
         public static final String TABLE_NAME = "ingredient";
@@ -89,6 +90,7 @@ public final class DatabaseContract {
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
+/*
     public static class User_Recipe implements BaseColumns {
         public static final String TABLE_NAME = "user_recipe";
         public static final String USER_ID = "user_id";
@@ -107,6 +109,7 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
+
 
     public static class Keyword implements BaseColumns {
         public static final String TABLE_NAME = "keyword";
@@ -138,5 +141,5 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
-
+*/
 }
