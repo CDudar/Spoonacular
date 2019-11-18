@@ -15,7 +15,6 @@ public final class DatabaseContract {
         public static final String TABLE_NAME = "recipe";
         public static final String ID = "id";
         public static final String RECIPE_ID = "recipe_id";
-        //public static final String KEY = ID;
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -23,7 +22,7 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
-/*
+
     public static class Step implements BaseColumns {
         public static final String TABLE_NAME = "step";
         public static final String STEP_NO = "step_no";
@@ -41,7 +40,6 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
-*/
 
     public static class Ingredient implements BaseColumns {
         public static final String TABLE_NAME = "ingredient";
@@ -90,7 +88,7 @@ public final class DatabaseContract {
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-/*
+
     public static class User_Recipe implements BaseColumns {
         public static final String TABLE_NAME = "user_recipe";
         public static final String USER_ID = "user_id";
@@ -105,7 +103,7 @@ public final class DatabaseContract {
                 "FOREIGN KEY (" + USER_ID + ") REFERENCES " + User.TABLE_NAME + "(" + User.ID + ") " +
                     "ON UPDATE CASCADE " +
                     "ON DELETE CASCADE, " +
-                "PRIMARY KEY (" + USER_ID + ", " + RECIPE_ID + ")";
+                "PRIMARY KEY (" + USER_ID + ", " + RECIPE_ID + "))";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
@@ -122,6 +120,7 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
+
 
     public static class Keyword_Recipe implements BaseColumns {
         public static final String TABLE_NAME = "keyword_recipe";
@@ -141,5 +140,4 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
-*/
 }

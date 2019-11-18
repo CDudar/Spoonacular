@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     // database variables
     DatabaseHelper myDb;
     EditText edit_ing_name;
-    Button btnAddIng;
+    Button btnAddIng, btnRestartDB;
+
 
 
     SearchFragment searchFrag;
@@ -83,7 +84,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // link up input text and buttons
         edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
         btnAddIng = (Button)findViewById(R.id.button_add);
+        btnRestartDB = (Button)findViewById(R.id.button_restart_db);
         AddIngredient();
+        restartDB();
 
     }
 
@@ -100,6 +103,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         else
                             Toast.makeText(MainActivity.this, "Ingre. NOT inserted", Toast.LENGTH_SHORT).show();
 
+                    }
+                }
+        );
+    }
+
+    public void restartDB() {
+        btnRestartDB.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        myDb.refreshDB();
                     }
                 }
         );
