@@ -1,14 +1,16 @@
 package com.example.spoonacular;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    //private static final String TAG = "DatabaseHelper";
+    private static final String TAG = "DatabaseHelper";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DatabaseContract.DATABASE_NAME, null, DatabaseContract.DATABASE_VERSION);
@@ -46,15 +48,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // initial function for adding data to DB -- incomplete -- do not use
-    /*
-    public boolean addData(String item) {
+    public boolean addIngredient(String ing_name) {
+        Log.d(TAG, "addData: Adding " + ing_name + " to " + DatabaseContract.Ingredient.TABLE_NAME);
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseContract.Recipe.RECIPE_ID, item);
 
-        Log.d(TAG, "addData: Adding " + item + " to " + DatabaseContract.Recipe.TABLE_NAME);
-
-        long result = db.insert(DatabaseContract.Recipe.TABLE_NAME, null, contentValues);
+        contentValues.put(DatabaseContract.Ingredient.NAME, ing_name);
+        long result = db.insert(DatabaseContract.Ingredient.TABLE_NAME, null, contentValues);
 
         if (result == -1){
             return false;
@@ -62,5 +63,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
-     */
+
 }

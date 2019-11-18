@@ -6,6 +6,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.textclassifier.TextLinks;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +45,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     int currentSelectedItemId;
     private SparseArray<Fragment.SavedState> savedStates = new SparseArray<Fragment.SavedState>();
 
+    // database variables
     DatabaseHelper myDb;
+    EditText edit_ing_name;
+    Button btnAddIng;
+
+
     SearchFragment searchFrag;
     AccountFragment accountFrag;
     //Fragment favoritesFrag;
@@ -73,19 +80,31 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // create a DB
         myDb = new DatabaseHelper(this);
 
+        // link up input text and buttons
+        edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
+        btnAddIng = (Button)findViewById(R.id.button_add);
+        AddIngredient();
+
     }
 
-    /*
-    public void AddData(String newEntry) {
-        boolean insertData = myDb.addData(newEntry);
 
-        if(insertData){
-            toastMessage("Data successfully inserted");
-        }else{
-            toastMessage("Data failed to be inserted");
-        }
+    public void AddIngredient() {
+        btnAddIng.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isInserted = myDb.addIngredient(edit_ing_name.getText().toString());
+
+                        if(isInserted == true)
+                            Toast.makeText(MainActivity.this, "Ingre. inserted", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(MainActivity.this, "Ingre. NOT inserted", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+        );
     }
-     */
+
 
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
