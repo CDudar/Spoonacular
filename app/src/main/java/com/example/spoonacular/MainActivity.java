@@ -47,8 +47,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     // database variables
     DatabaseHelper myDb;
-    EditText edit_ing_name;
-    Button btnAddIng, btnRestartDB;
+    EditText edit_ing_name, edit_step_no, edit_step_desc, edit_step_recipe, edit_recipe_name, edit_recipe_id;
+    Button btnAddIng, btnRestartDB, btnAddRecipe, btnAddStep;
+
 
 
 
@@ -81,16 +82,29 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // create a DB
         myDb = new DatabaseHelper(this);
 
-        // link up input text and buttons
+        // link up input text boxes
         edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
+        edit_step_no = (EditText)findViewById(R.id.edit_step_no);
+        edit_step_desc = (EditText)findViewById(R.id.edit_step_description);
+        edit_step_recipe = (EditText)findViewById(R.id.edit_step_recipe_id);
+        edit_recipe_name = (EditText)findViewById(R.id.edit_recipe_name);
+        edit_recipe_id = (EditText)findViewById(R.id.edit_recipe_id);
+
+        // link up buttons
         btnAddIng = (Button)findViewById(R.id.button_add);
+        btnAddRecipe = (Button)findViewById(R.id.button_add_recipe);
+        btnAddStep = (Button)findViewById(R.id.button_add_step);
         btnRestartDB = (Button)findViewById(R.id.button_restart_db);
+
+        // event listeners
         AddIngredient();
+        AddRecipe();
+        AddStep();
         restartDB();
 
     }
 
-
+    // Listener for add ingredients button
     public void AddIngredient() {
         btnAddIng.setOnClickListener(
                 new View.OnClickListener() {
@@ -99,9 +113,48 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         boolean isInserted = myDb.addIngredient(edit_ing_name.getText().toString());
 
                         if(isInserted == true)
-                            Toast.makeText(MainActivity.this, "Ingre. inserted", Toast.LENGTH_SHORT).show();
+                            toastMessage("Ingre. inserted");
                         else
-                            Toast.makeText(MainActivity.this, "Ingre. NOT inserted", Toast.LENGTH_SHORT).show();
+                            toastMessage("Ingre. NOT inserted");
+
+                    }
+                }
+        );
+    }
+
+    // Listener for add Recipe button
+    public void AddRecipe() {
+        btnAddRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isInserted = myDb.addRecipe(edit_recipe_id.getText().toString(),
+                                                            edit_recipe_name.getText().toString());
+
+                        if(isInserted == true)
+                            toastMessage("Recipe inserted");
+                        else
+                            toastMessage("Recipe NOT inserted");
+
+                    }
+                }
+        );
+    }
+
+    // Listener for add Step button
+    public void AddStep() {
+        btnAddStep.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isInserted = myDb.addStep(edit_step_no.getText().toString(),
+                                                          edit_step_desc.getText().toString(),
+                                                          edit_step_recipe.getText().toString());
+
+                        if(isInserted == true)
+                            toastMessage("Step inserted");
+                        else
+                            toastMessage("Step NOT inserted");
 
                     }
                 }
