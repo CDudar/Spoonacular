@@ -1,9 +1,14 @@
 package com.example.spoonacular;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.textclassifier.TextLinks;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,14 +16,26 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
-    DatabaseHelper myDb;
 
+import java.util.ArrayList;
+
+
+
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
 
     int currentSelectedItemId;
     private SparseArray<Fragment.SavedState> savedStates = new SparseArray<Fragment.SavedState>();
+
+    // database variables
+    DatabaseHelper myDb;
+    EditText edit_ing_name, edit_step_no, edit_step_desc, edit_step_recipe, edit_recipe_name, edit_recipe_id;
+    Button btnAddIng, btnRestartDB, btnAddRecipe, btnAddStep, btnDeleteRecipe, btnUpdateRecipe, btnGetRecipe;
+
+
+
 
     SearchFragment searchFrag;
     AccountFragment accountFrag;
@@ -31,16 +48,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // create a DB
-      //  myDb = new DatabaseHelper(this);
 
         System.out.println("running again");
 
         super.onCreate(savedInstanceState);
 
-    if(savedInstanceState != null){
-        searchFrag = (SearchFragment) getSupportFragmentManager().getFragment(savedInstanceState, "search");
-    }
+        if(savedInstanceState != null){
+            searchFrag = (SearchFragment) getSupportFragmentManager().getFragment(savedInstanceState, "search");
+        }
 
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -49,17 +64,153 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navView.setSelectedItemId(R.id.navigation_search);
         swapFragments(R.id.navigation_search, "search");
 
+        // create a DB
+        myDb = new DatabaseHelper(this);
+
+        // link up input text boxes
+        // edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
+        edit_step_no = (EditText)findViewById(R.id.edit_step_no);
+        edit_step_desc = (EditText)findViewById(R.id.edit_step_description);
+        edit_step_recipe = (EditText)findViewById(R.id.edit_step_recipe_id);
+        edit_recipe_name = (EditText)findViewById(R.id.edit_recipe_name);
+        edit_recipe_id = (EditText)findViewById(R.id.edit_recipe_id);
+
+        // link up buttons
+        // btnAddIng = (Button)findViewById(R.id.button_add);
+        btnAddRecipe = (Button)findViewById(R.id.button_add_recipe);
+        btnAddStep = (Button)findViewById(R.id.button_add_step);
+        btnRestartDB = (Button)findViewById(R.id.button_restart_db);
+        btnDeleteRecipe = (Button)findViewById(R.id.button_delete_recipe);
+        btnUpdateRecipe = (Button)findViewById(R.id.button_update_recipe);
+        btnGetRecipe = (Button)findViewById(R.id.button_get_recipe);
+
+        // event listeners
+        //AddIngredient();
+        AddRecipe();
+        AddStep();
+        restartDB();
+        DeleteRecipe();
+        UpdateRecipe();
+        GetRecipes();
+
     }
 
-    public void AddData(String newEntry) {
-        boolean insertData = myDb.addData(newEntry);
+    public void DeleteRecipe() {
+        btnDeleteRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isDeleted = myDb.deleteRecipe(edit_recipe_id.getText().toString());
 
-        if(insertData){
-            toastMessage("Data successfully inserted");
-        }else{
-            toastMessage("Data failed to be inserted");
-        }
+                        if(isDeleted == true)
+                            toastMessage("Deleted.");
+                        else
+                            toastMessage("Not deleted");
+                    }
+                }
+        );
     }
+
+    public void UpdateRecipe() {
+        btnUpdateRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isUpdated = myDb.updateRecipe(edit_recipe_id.getText().toString(), edit_recipe_name.getText().toString());
+
+                        if(isUpdated == true)
+                            toastMessage("Updated.");
+                        else
+                            toastMessage("Not Updated");
+                    }
+                }
+        );
+    }
+
+    public void GetRecipes() {
+        btnGetRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String[] ingredients = new String[2];
+                        ingredients[0] = "egg";
+                        ingredients[1] = "pasta";
+                        ArrayList<String> result = myDb.getRecipeNamesFromIngredients(ingredients);
+
+                        for (int i = 0; i < result.size(); i++) {
+                            Log.d("Get_Recipe_Data", result.get(i), null);
+                        }
+                    }
+                }
+        );
+    }
+
+    // Listener for add ingredients button
+    public void AddIngredient() {
+        btnAddIng.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isInserted = myDb.addIngredient(edit_ing_name.getText().toString());
+
+                        if(isInserted == true)
+                            toastMessage("Ingre. inserted");
+                        else
+                            toastMessage("Ingre. NOT inserted");
+                    }
+                }
+        );
+    }
+
+    // Listener for add Recipe button
+    public void AddRecipe() {
+        btnAddRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isInserted = myDb.addRecipe(edit_recipe_id.getText().toString(),
+                                                            edit_recipe_name.getText().toString());
+
+                        if(isInserted == true)
+                            toastMessage("Recipe inserted");
+                        else
+                            toastMessage("Recipe NOT inserted");
+                    }
+                }
+        );
+    }
+
+    // Listener for add Step button
+    public void AddStep() {
+        btnAddStep.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isInserted = myDb.addStep(edit_step_no.getText().toString(),
+                                                          edit_step_desc.getText().toString(),
+                                                          edit_step_recipe.getText().toString());
+
+                        if(isInserted == true)
+                            toastMessage("Step inserted");
+                        else
+                            toastMessage("Step NOT inserted");
+                    }
+                }
+        );
+    }
+
+    // Listener for restart / upgrading DB
+    public void restartDB() {
+        btnRestartDB.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        myDb.refreshDB();
+                    }
+                }
+        );
+    }
+
 
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
