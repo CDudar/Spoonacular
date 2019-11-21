@@ -6,7 +6,6 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.textclassifier.TextLinks;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,9 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 
 import java.util.ArrayList;
 
@@ -66,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         // create a DB
         myDb = new DatabaseHelper(this);
-
+/*
         // link up input text boxes
         // edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
         edit_step_no = (EditText)findViewById(R.id.edit_step_no);
@@ -92,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         DeleteRecipe();
         UpdateRecipe();
         GetRecipes();
-
+*/
     }
 
     public void DeleteRecipe() {
