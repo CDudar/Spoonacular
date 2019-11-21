@@ -9,7 +9,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -73,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // -------- RECIPE
-    // done -
+    // done
     public boolean addRecipe(String id, String name) {
         if(id.trim().equals("") || id.isEmpty()){
             return false;
@@ -94,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // done  - need testing
+    // done
     public boolean updateRecipe(String id, String name) {
         if(id.trim().equals("") || id.isEmpty()){
             return false;
@@ -115,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // done - need testing
+    // done
     public boolean deleteRecipe(String id) {
         if(id.trim().equals("") || id.isEmpty()){
             return false;
@@ -137,10 +136,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     // -------- INGREDIENT
-    // done -
+    // done
     public boolean addIngredient(String ing_name) {
-        Log.d(TAG, "addData: Adding " + ing_name + " to " + DatabaseContract.Ingredient.TABLE_NAME);
-
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -155,10 +152,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // -------- STEP
-    // done -
+    // done
     public boolean addStep(String no, String description, String recipe_id) {
-        Log.d(TAG, "addData: Adding " + no + "(" + recipe_id + ")" + " to " + DatabaseContract.Step.TABLE_NAME);
-
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -214,132 +209,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // -------- USER
     //
-    public boolean addUser(String no, String description, String recipe_id) {
-        Log.d(TAG, "addData: Adding " + no + "(" + recipe_id + ")" + " to " + DatabaseContract.Step.TABLE_NAME);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(DatabaseContract.Step.STEP_NO, no);
-        contentValues.put(DatabaseContract.Step.DESCRIPTION, description);
-        contentValues.put(DatabaseContract.Step.RECIPE_ID, recipe_id);
-
-        long result = db.insert(DatabaseContract.Step.TABLE_NAME, null, contentValues);
-
-        if (result == -1){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean addUser() {
+        return false;
     }
 
     // -------- KEYWORD
     //
-    public boolean addKeyword(String no, String description, String recipe_id) {
-        Log.d(TAG, "addData: Adding " + no + "(" + recipe_id + ")" + " to " + DatabaseContract.Step.TABLE_NAME);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(DatabaseContract.Step.STEP_NO, no);
-        contentValues.put(DatabaseContract.Step.DESCRIPTION, description);
-        contentValues.put(DatabaseContract.Step.RECIPE_ID, recipe_id);
-
-        long result = db.insert(DatabaseContract.Step.TABLE_NAME, null, contentValues);
-
-        if (result == -1){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean addKeyword() {
+        return false;
     }
 
+    //
     public boolean removeKeyword() { return false; }
 
     // public boolean getKeywordFromKeywordID() { return false; }
 
     // -------- INGREDIENT - RECIPE
     //
-    public boolean addIngredientToRecipe(String no, String description, String recipe_id) {
-        Log.d(TAG, "addData: Adding " + no + "(" + recipe_id + ")" + " to " + DatabaseContract.Step.TABLE_NAME);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(DatabaseContract.Step.STEP_NO, no);
-        contentValues.put(DatabaseContract.Step.DESCRIPTION, description);
-        contentValues.put(DatabaseContract.Step.RECIPE_ID, recipe_id);
-
-        long result = db.insert(DatabaseContract.Step.TABLE_NAME, null, contentValues);
-
-        if (result == -1){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean addIngredientToRecipe() {
+        return false;
     }
 
+    //
     public boolean removeIngredientFromRecipe() { return false; }
 
     // public boolean getIngredientsFromRecipeID() { return false; }
 
     // -------- USER - RECIPE
     //
-    public boolean addFavoriteRecipe(String no, String description, String recipe_id) {
-        Log.d(TAG, "addData: Adding " + no + "(" + recipe_id + ")" + " to " + DatabaseContract.Step.TABLE_NAME);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(DatabaseContract.Step.STEP_NO, no);
-        contentValues.put(DatabaseContract.Step.DESCRIPTION, description);
-        contentValues.put(DatabaseContract.Step.RECIPE_ID, recipe_id);
-
-        long result = db.insert(DatabaseContract.Step.TABLE_NAME, null, contentValues);
-
-        if (result == -1){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean addFavoriteRecipe() {
+        return false;
     }
 
+    //
     public boolean removeFavoriteRecipe() {
         return false;
     }
 
     // -------- KEYWORD - RECIPE
     //
-    public boolean addKeywordRecipe(String no, String description, String recipe_id) {
-        Log.d(TAG, "addData: Adding " + no + "(" + recipe_id + ")" + " to " + DatabaseContract.Step.TABLE_NAME);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(DatabaseContract.Step.STEP_NO, no);
-        contentValues.put(DatabaseContract.Step.DESCRIPTION, description);
-        contentValues.put(DatabaseContract.Step.RECIPE_ID, recipe_id);
-
-        long result = db.insert(DatabaseContract.Step.TABLE_NAME, null, contentValues);
-
-        if (result == -1){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean addKeywordRecipe() {
+        return false;
     }
 
+    //
     public boolean removeKeywordRecipe() { return false; }
 
     //public boolean getKeywordFromRecipeID() { return false; }
 
     // -------- GET QUERIES
+    //
     public ArrayList<String[]> getCompleteRecipesData(String[] id) {
         ArrayList<String[]> result = new ArrayList<>();
 
         return result;
     }
 
+    //
     public ArrayList<String[]> getCompleteFavoriteRecipesData(String[] id) {
         ArrayList<String[]> result = new ArrayList<>();
 
@@ -351,24 +277,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    // do we need separate functions for get ALL recipe and get
+
     // done - need testing
     // change to get recipe names and keywords??
-    public ArrayList<String> getRecipeNames(String[] ids) {
+    public ArrayList<String> getRecipeNamesFromIngredients(String[] ingredients) {
         ArrayList<String> result = new ArrayList<String>();
-        String selectQuery = "SELECT * FROM " + DatabaseContract.Recipe.TABLE_NAME + " WHERE " + DatabaseContract.Recipe.RECIPE_ID
-                + " IN (";
+        //String selectQuery = "SELECT DISTINCT r.recipe_name FROM recipe r INNER JOIN ingredient i ON r.recipe_id = i.recipe_id WHERE i." +
+        //        DatabaseContract.Ingredient.NAME + " IN (";
 
-        for (int i = 0; i < ids.length; i++) {
-            if (ids[i].trim().equals("") || ids[i].isEmpty()) {
-                return result;
+        String selectQuery = "SELECT DISTINCT * FROM recipe";
+
+        /*
+        for (int i = 0; i < ingredients.length; i++) {
+            if (ingredients[i].trim().equals("") || ingredients[i].isEmpty()) {
+                // skip
             }
-
-            if (i == ids.length-1) {
-                selectQuery += ids[i] + ")";
+            else if (i == ingredients.length-1) {
+                selectQuery += ingredients[i] + ")";
             }else {
-                selectQuery += ids[i] + ",";
+                selectQuery += ingredients[i] + ",";
             }
         }
+        */
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
@@ -381,7 +312,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // String[] whereArgs = new String[]{searchString};
         // cursor = mReadableDB.query(WORD_LIST_TABLE, columns, where, whereArgs, null, null, null);
 
+        cursor = db.rawQuery(selectQuery, null);
+        if (cursor != null && cursor.moveToFirst()){
+            do {
+                result.add(cursor.getString(cursor.getColumnIndex(DatabaseContract.Recipe.RECIPE_NAME)));
+            } while (cursor.moveToNext());
 
+            cursor.close();
+        }
+
+        /*
         try {
             cursor = db.rawQuery(selectQuery, null);
 
@@ -393,6 +333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }finally {
             cursor.close();
         }
+        */
 
         return result;
     }

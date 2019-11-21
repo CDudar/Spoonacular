@@ -8,55 +8,18 @@
     android:paddingTop="?attr/actionBarSize">
 
 
-    <TextView
-        android:id="@+id/text_ing_name"
-        android:layout_width="126dp"
-        android:layout_height="37dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="259dp"
-        android:layout_marginRight="262dp"
-        android:text="Ingredient Name" />
-
-    <TextView
-        android:id="@+id/text_recipe"
-        android:layout_width="126dp"
-        android:layout_height="37dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="262dp"
-        android:layout_marginRight="262dp"
-        android:text="Recipe Name" />
-
-    <EditText
-        android:id="@+id/edit_ing_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="31dp"
-        android:layout_marginRight="30dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
     <Button
-        android:id="@+id/button_add"
+        android:id="@+id/button_get_recipe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="34dp"
-        android:layout_marginLeft="34dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginLeft="19dp"
         android:layout_marginTop="150dp"
-        android:layout_marginBottom="33dp"
-        android:text="Add Ingredient" />
+        android:layout_marginBottom="19dp"
+        android:text="Get Recipe" />
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -84,10 +47,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="67dp"
-        android:layout_marginRight="67dp"
-        android:layout_marginBottom="31dp"
         android:layout_marginTop="400dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
+        android:layout_marginBottom="17dp"
         android:text="Restart DB" />
 
     <EditText
@@ -97,9 +60,9 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="55dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginRight="25dp"
         android:ems="10"
         android:inputType="textPersonName" />
 
@@ -196,9 +159,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="36dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginBottom="115dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginBottom="94dp"
         android:text="ADD RECIPE" />
 
     <Button
@@ -209,10 +172,46 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="163dp"
-        android:layout_marginLeft="163dp"
-        android:layout_marginBottom="114dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginLeft="176dp"
+        android:layout_marginBottom="22dp"
         android:text="ADD STEP" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="96dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="40dp"
+        android:text="Recipe Name" />
+
+    <Button
+        android:id="@+id/button_update_recipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="155dp"
+        android:layout_marginRight="155dp"
+        android:layout_marginBottom="95dp"
+        android:text="Update Recipe" />
+
+    <Button
+        android:id="@+id/button_delete_recipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="96dp"
+        android:text="Delete Recipe" />
 
 </RelativeLayout>
 

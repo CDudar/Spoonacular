@@ -1,6 +1,7 @@
 package com.example.spoonacular;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -30,6 +31,7 @@ import org.json.JSONTokener;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import okhttp3.Call;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     // database variables
     DatabaseHelper myDb;
     EditText edit_ing_name, edit_step_no, edit_step_desc, edit_step_recipe, edit_recipe_name, edit_recipe_id;
-    Button btnAddIng, btnRestartDB, btnAddRecipe, btnAddStep;
+    Button btnAddIng, btnRestartDB, btnAddRecipe, btnAddStep, btnDeleteRecipe, btnUpdateRecipe, btnGetRecipe;
 
 
 
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         myDb = new DatabaseHelper(this);
 
         // link up input text boxes
-        edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
+        // edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
         edit_step_no = (EditText)findViewById(R.id.edit_step_no);
         edit_step_desc = (EditText)findViewById(R.id.edit_step_description);
         edit_step_recipe = (EditText)findViewById(R.id.edit_step_recipe_id);
@@ -91,17 +93,73 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         edit_recipe_id = (EditText)findViewById(R.id.edit_recipe_id);
 
         // link up buttons
-        btnAddIng = (Button)findViewById(R.id.button_add);
+        // btnAddIng = (Button)findViewById(R.id.button_add);
         btnAddRecipe = (Button)findViewById(R.id.button_add_recipe);
         btnAddStep = (Button)findViewById(R.id.button_add_step);
         btnRestartDB = (Button)findViewById(R.id.button_restart_db);
+        btnDeleteRecipe = (Button)findViewById(R.id.button_delete_recipe);
+        btnUpdateRecipe = (Button)findViewById(R.id.button_update_recipe);
+        btnGetRecipe = (Button)findViewById(R.id.button_get_recipe);
 
         // event listeners
-        AddIngredient();
+        //AddIngredient();
         AddRecipe();
         AddStep();
         restartDB();
+        DeleteRecipe();
+        UpdateRecipe();
+        GetRecipes();
 
+    }
+
+    public void DeleteRecipe() {
+        btnDeleteRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isDeleted = myDb.deleteRecipe(edit_recipe_id.getText().toString());
+
+                        if(isDeleted == true)
+                            toastMessage("Deleted.");
+                        else
+                            toastMessage("Not deleted");
+                    }
+                }
+        );
+    }
+
+    public void UpdateRecipe() {
+        btnUpdateRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isUpdated = myDb.updateRecipe(edit_recipe_id.getText().toString(), edit_recipe_name.getText().toString());
+
+                        if(isUpdated == true)
+                            toastMessage("Updated.");
+                        else
+                            toastMessage("Not Updated");
+                    }
+                }
+        );
+    }
+
+    public void GetRecipes() {
+        btnGetRecipe.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String[] ingredients = new String[2];
+                        ingredients[0] = "egg";
+                        ingredients[1] = "pasta";
+                        ArrayList<String> result = myDb.getRecipeNamesFromIngredients(ingredients);
+
+                        for (int i = 0; i < result.size(); i++) {
+                            Log.d("Get_Recipe_Data", result.get(i), null);
+                        }
+                    }
+                }
+        );
     }
 
     // Listener for add ingredients button
@@ -116,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             toastMessage("Ingre. inserted");
                         else
                             toastMessage("Ingre. NOT inserted");
-
                     }
                 }
         );
@@ -135,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             toastMessage("Recipe inserted");
                         else
                             toastMessage("Recipe NOT inserted");
-
                     }
                 }
         );
@@ -155,12 +211,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             toastMessage("Step inserted");
                         else
                             toastMessage("Step NOT inserted");
-
                     }
                 }
         );
     }
 
+    // Listener for restart / upgrading DB
     public void restartDB() {
         btnRestartDB.setOnClickListener(
                 new View.OnClickListener() {
