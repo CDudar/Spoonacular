@@ -4,39 +4,14 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.textclassifier.TextLinks;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.spoonacular.ui.home.HomeFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.Iterator;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
     DatabaseHelper myDb;
@@ -47,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     SearchFragment searchFrag;
     AccountFragment accountFrag;
+    SpoonacularQuery q = new SpoonacularQuery(this);
     //Fragment favoritesFrag;
 
 
@@ -177,12 +153,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         tv.setGravity(Gravity.CENTER | Gravity.CENTER);
 
         searchFrag.getQueriedIngredientsLayout().addView(tv);
+        q.addIngredient(string);
+        q.performQuery();
 
     }
 
     @Override
     public void onFragmentInteraction(String string) {
         System.out.println("User entering " + string.toString());
+
 
 
     }
