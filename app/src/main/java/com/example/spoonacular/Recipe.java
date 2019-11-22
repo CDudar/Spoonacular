@@ -8,8 +8,8 @@ public class Recipe {
     String id;
     String title;
     ArrayList<RecipeStep>  recipeSteps = new ArrayList<RecipeStep>();
-    ArrayList<RecipeIngredient> recipeIngredients;
-    ArrayList<String> keywords;
+    ArrayList<RecipeIngredient> recipeIngredients = new ArrayList<>();
+    ArrayList<String> keywords = new ArrayList<>();
     String cookTime;
 
 
@@ -57,6 +57,18 @@ public class Recipe {
         for(int i = 0 ; i < recipeSteps.size(); i++){
             System.out.println(recipeSteps.get(i).getStepNo());
             System.out.println(recipeSteps.get(i).getDescription());
+        }
+    }
+
+    public void ingredientsPrinter(){
+        if(recipeIngredients.size() == 0) {
+            System.out.println("no recipe ingredients");
+            return;
+        }
+        for(int i = 0 ; i < recipeIngredients.size(); i++){
+            System.out.println(recipeIngredients.get(i).getIngredientID());
+            System.out.println(recipeIngredients.get(i).getName());
+            System.out.println(recipeIngredients.get(i).getQuantity());
         }
     }
 

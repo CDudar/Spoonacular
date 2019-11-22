@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public void onFragmentSubmission(String string){
         //if entered string in ingredients
-        System.out.println("user submitted " + string.toString());
+        //System.out.println("user submitted " + string.toString());
 
         TextView tv = new TextView(getApplicationContext());
         tv.setText(string);
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onFragmentInteraction(String string) {
-        System.out.println("User entering " + string.toString());
+        //System.out.println("User entering " + string.toString());
 
 
 

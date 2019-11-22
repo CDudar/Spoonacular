@@ -26,7 +26,7 @@ public class SpoonacularQuery {
     Activity mainActivity;
 
     String key = "db9a577a695640528bb7a67487f8a907";
-    String searchRecipesURL;// = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=apples,+flour,+sugar&number=5&apiKey=db9a577a695640528bb7a67487f8a907";
+    String searchRecipesURL;   // = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=apples,+flour,+sugar&number=5&apiKey=db9a577a695640528bb7a67487f8a907";
     String specificRecipeURL;
 
     //String search
@@ -62,7 +62,7 @@ public class SpoonacularQuery {
             url = url + "+" + ingredients.get(ingredients.size() - 1);
         }
 
-        url = url + "&number=10";
+        url = url + "&number=15";
         url = url + "&apiKey=db9a577a695640528bb7a67487f8a907";
 
         return url;
@@ -79,12 +79,10 @@ public class SpoonacularQuery {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        System.out.println("before req");
 
-       // final Semaphore mutex = new Semaphore(0);
+
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         client.newCall(request).enqueue(new Callback() {
-           // Handler mainHandler = new Handler(context.getMainLooper());
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -95,11 +93,11 @@ public class SpoonacularQuery {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if(response.isSuccessful()){
-                    System.out.println("successful");
+
                     final String myResponse = response.body().string();
 
 
-                            System.out.print("got here");
+
                             try {
 
                                 JSONArray jsonArr = new JSONArray(myResponse);
@@ -109,12 +107,12 @@ public class SpoonacularQuery {
                                     Iterator<String> iter = currObj.keys();
                                     while(iter.hasNext()){
                                         String key = iter.next();
-                                        System.out.println(key.toString());
+
                                         try{
                                             if(key.toString().equals("id")){
-                                                System.out.println("added id");
+
                                                 results.add(i, new Recipe(currObj.get(key).toString()));
-                                                System.out.println("so size is inc? " +  results.size());
+
                                             }
                                         }
                                         catch(JSONException e){
@@ -124,14 +122,12 @@ public class SpoonacularQuery {
                                     }
 
                                 }
-                                //  JSONObject id = mainObject.getJSONObject("id");
-                                // System.out.println(id.toString());
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
                 }
-                System.out.println("done");
+
                 countDownLatch.countDown();
 
             }
@@ -178,10 +174,10 @@ public class SpoonacularQuery {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if(response.isSuccessful()){
-                    System.out.println("successful");
+
                     final String myResponse = response.body().string();
 
-                    System.out.print("got here");
+
                     JSONObject currObj = null;
 
                     try {
@@ -190,17 +186,42 @@ public class SpoonacularQuery {
 
                         while (iter.hasNext()) {
                             String key = iter.next();
-                         //   System.out.println(key.toString());
 
                             if (key.toString().equals("id")) {
-                                System.out.println("added id recipe meaningless");
-                                // results.add(i, new Recipe(currObj.get(key).toString()));
-                                //  System.out.println("so size is inc? " +  results.size());
+
                             } else if (key.toString().equals("title")) {
                                 results.get(recipeIdx).setTitle(currObj.get(key).toString());
                             }
                               else if(key.toString().equals("readyInMinutes")){
                                 results.get(recipeIdx).setCookTime(currObj.get(key).toString());
+                            }
+                              else if(key.toString().equals("extendedIngredients")){
+                                  JSONArray ingrArray = new JSONArray(currObj.get(key).toString());
+                                  for(int i = 0 ; i < ingrArray.length(); i++){
+                                      JSONObject ingrObj = ingrArray.getJSONObject(i);
+                                      Iterator<String> ingrIter = ingrObj.keys();
+                                      String ingredientID = "";
+                                      String name = "";
+                                      String amount = "";
+                                      String units = "";
+                                      while(ingrIter.hasNext()){
+                                          String ingrKey = ingrIter.next();
+                                          if(ingrKey.equals("id")){
+                                            ingredientID = ingrObj.get(ingrKey).toString();
+                                          }
+                                          else if(ingrKey.equals("name")){
+                                            name = ingrObj.get(ingrKey).toString();
+                                          }
+                                          else if(ingrKey.equals("amount")){
+                                            amount = ingrObj.get(ingrKey).toString();
+                                          }
+                                          else if(ingrKey.equals("unit")){
+                                            units = ingrObj.get(ingrKey).toString();
+                                          }
+
+                                      }
+                                      results.get(recipeIdx).getRecipeIngredients().add(new RecipeIngredient(ingredientID, name , amount, units));
+                                  }
                             }
                               else if(key.toString().equals("analyzedInstructions")){
 
@@ -212,7 +233,7 @@ public class SpoonacularQuery {
                                             String instrKey = instrIter.next();
                                             if(instrKey.equals("steps")){
                                                 JSONArray stepsArray = new JSONArray(instrObj.get(instrKey).toString());
-                                                System.out.println("at steps");
+
                                                 for(int j = 0; j < stepsArray.length(); j++){
                                                     JSONObject stepsObject = stepsArray.getJSONObject(j);
                                                     Iterator<String> stepsIter  = stepsObject.keys();
@@ -244,7 +265,7 @@ public class SpoonacularQuery {
                     }
 
                 }
-                System.out.println("done");
+
                 countDownLatch.countDown();
 
             }
@@ -266,15 +287,21 @@ public class SpoonacularQuery {
             return;
 
         searchRecipesURL = buildSearchRecipesURLString();
+
+        System.out.println(searchRecipesURL);
+
         getRecipeObjects(searchRecipesURL);
+
 
         for(int i = 0; i < results.size(); i++){
             specificRecipeURL = buildSpecificRecipeURLString(results.get(i).getId());
-            System.out.println(specificRecipeURL);
             populateRecipeObject(i, specificRecipeURL);
+
+            results.get(i).ingredientsPrinter();
+            System.out.println(specificRecipeURL);
             System.out.println(results.get(i).getTitle());
-            System.out.println(results.get(i).getCookTime());
-            results.get(i).stepsPrinter();
+
+
 
         }
 
