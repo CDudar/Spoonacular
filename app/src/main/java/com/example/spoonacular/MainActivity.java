@@ -6,18 +6,15 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.textclassifier.TextLinks;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spoonacular.ui.home.HomeFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -32,16 +29,11 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import java.util.ArrayList;
+
+
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
 
@@ -54,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     SearchFragment searchFrag;
     AccountFragment accountFrag;
+    SpoonacularQuery q = new SpoonacularQuery(this);
     //Fragment favoritesFrag;
 
     private TextView mTextViewResult;
@@ -78,41 +71,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         // create a DB
         myDb = new DatabaseHelper(this);
-
-
-        // link up buttons
-        btnAddIng = (Button)findViewById(R.id.button_add_ing);
-        btnAddRecipe = (Button)findViewById(R.id.button_add_recipe);
-        btnAddStep = (Button)findViewById(R.id.button_add_step);
-        btnRestartDB = (Button)findViewById(R.id.button_restart_db);
-        btnDeleteRecipe = (Button)findViewById(R.id.button_delete_recipe);
-        //btnUpdateRecipe = (Button)findViewById(R.id.button_update_recipe);
-        btnGetRecipe = (Button)findViewById(R.id.button_get_recipe);
-        btnAddUser =(Button)findViewById(R.id.button_add_user);
-        btnGetIngs =(Button)findViewById(R.id.button_get_Ings);
-        btnGetSteps =(Button)findViewById(R.id.button_get_steps);
-        btnAddFavorite =(Button)findViewById(R.id.button_add_fav);
-        btnRemoveFavorite =(Button)findViewById(R.id.button_remove_fav);
-        btnGetUser =(Button)findViewById(R.id.button_get_user);
-        btnGetFavorite =(Button)findViewById(R.id.button_get_fav);
-
-        // event listeners
-        AddIngredient();
-        AddRecipe();
-        AddStep();
-        restartDB();
-        DeleteRecipe();
-        //UpdateRecipe();
-        GetRecipes();
-        GetIngredients();
-        AddStep();
-        GetSteps();
-        AddUser();
-        GetUser();
-        AddToFavourite();
-        RemoveFavourite();
-        GetFavouriteRecipes();
-
     }
 
     public void DeleteRecipe() {
@@ -494,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public void onFragmentSubmission(String string){
         //if entered string in ingredients
-        System.out.println("user submitted " + string.toString());
+        //System.out.println("user submitted " + string.toString());
 
         TextView tv = new TextView(getApplicationContext());
         tv.setText(string);
@@ -502,12 +460,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         tv.setGravity(Gravity.CENTER | Gravity.CENTER);
 
         searchFrag.getQueriedIngredientsLayout().addView(tv);
+        q.addIngredient(string);
+        q.performQuery();
 
     }
 
     @Override
     public void onFragmentInteraction(String string) {
-        System.out.println("User entering " + string.toString());
+        //System.out.println("User entering " + string.toString());
+
 
 
     }
