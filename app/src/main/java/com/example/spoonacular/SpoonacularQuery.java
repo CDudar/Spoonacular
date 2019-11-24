@@ -62,7 +62,7 @@ public class SpoonacularQuery {
             url = url + "+" + ingredients.get(ingredients.size() - 1);
         }
 
-        url = url + "&number=15";
+        url = url + "&number=3";
         url = url + "&apiKey=db9a577a695640528bb7a67487f8a907";
 
         return url;

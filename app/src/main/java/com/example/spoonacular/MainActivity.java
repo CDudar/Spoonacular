@@ -23,7 +23,15 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
 
+    enum Mode{
+        DEV,
+        USER
+    }
+
+    public Mode mode = Mode.DEV;
+
     int currentSelectedItemId;
+
     private SparseArray<Fragment.SavedState> savedStates = new SparseArray<Fragment.SavedState>();
 
     // database variables
@@ -295,14 +303,26 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //if entered string in ingredients
         //System.out.println("user submitted " + string.toString());
 
-        TextView tv = new TextView(getApplicationContext());
-        tv.setText(string);
-        tv.setPadding(20, 5, 0, 0);
-        tv.setGravity(Gravity.CENTER | Gravity.CENTER);
+        if(mode == Mode.DEV){
+            q.addIngredient(string);
+            q.performQuery();
+        }
 
-        searchFrag.getQueriedIngredientsLayout().addView(tv);
-        q.addIngredient(string);
-        q.performQuery();
+        else if(mode == Mode.USER){
+
+            TextView hv = new TextView(getApplicationContext());
+            hv.setText(string);
+            hv.setPadding(20, 5, 0, 0);
+            hv.setGravity(Gravity.CENTER | Gravity.CENTER);
+            searchFrag.getQueriedIngredientsLayout().addView(hv);
+
+            //for(int i = 0; i < recipes.size(); i++){
+             //   //Create the recipe TV and append to vv
+
+            //}
+
+
+        }
 
     }
 
