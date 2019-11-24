@@ -15,8 +15,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.w3c.dom.Text;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 
 
@@ -28,18 +42,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     // database variables
     DatabaseHelper myDb;
-    EditText edit_ing_name, edit_step_no, edit_step_desc, edit_step_recipe, edit_recipe_name, edit_recipe_id;
-    Button btnAddIng, btnRestartDB, btnAddRecipe, btnAddStep, btnDeleteRecipe, btnUpdateRecipe, btnGetRecipe;
-
-
-
+    Button btnAddIng, btnRestartDB, btnAddRecipe, btnAddStep, btnDeleteRecipe, btnUpdateRecipe, btnGetRecipe, btnAddUser, btnGetIngs, btnGetSteps, btnAddFavorite, btnRemoveFavorite, btnGetUser, btnGetFavorite;
 
     SearchFragment searchFrag;
     AccountFragment accountFrag;
     SpoonacularQuery q = new SpoonacularQuery(this);
     //Fragment favoritesFrag;
-
-
 
     private TextView mTextViewResult;
 
@@ -63,33 +71,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         // create a DB
         myDb = new DatabaseHelper(this);
-/*
-        // link up input text boxes
-        // edit_ing_name = (EditText)findViewById(R.id.edit_ing_name);
-        edit_step_no = (EditText)findViewById(R.id.edit_step_no);
-        edit_step_desc = (EditText)findViewById(R.id.edit_step_description);
-        edit_step_recipe = (EditText)findViewById(R.id.edit_step_recipe_id);
-        edit_recipe_name = (EditText)findViewById(R.id.edit_recipe_name);
-        edit_recipe_id = (EditText)findViewById(R.id.edit_recipe_id);
-
-        // link up buttons
-        // btnAddIng = (Button)findViewById(R.id.button_add);
-        btnAddRecipe = (Button)findViewById(R.id.button_add_recipe);
-        btnAddStep = (Button)findViewById(R.id.button_add_step);
-        btnRestartDB = (Button)findViewById(R.id.button_restart_db);
-        btnDeleteRecipe = (Button)findViewById(R.id.button_delete_recipe);
-        btnUpdateRecipe = (Button)findViewById(R.id.button_update_recipe);
-        btnGetRecipe = (Button)findViewById(R.id.button_get_recipe);
-
-        // event listeners
-        //AddIngredient();
-        AddRecipe();
-        AddStep();
-        restartDB();
-        DeleteRecipe();
-        UpdateRecipe();
-        GetRecipes();
-*/
     }
 
     public void DeleteRecipe() {
@@ -97,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean isDeleted = myDb.deleteRecipe(edit_recipe_id.getText().toString());
-
+                        //boolean isDeleted = myDb.deleteRecipe(edit_recipe_id.getText().toString());
+                        boolean isDeleted = false;
                         if(isDeleted == true)
                             toastMessage("Deleted.");
                         else
@@ -113,8 +94,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean isUpdated = myDb.updateRecipe(edit_recipe_id.getText().toString(), edit_recipe_name.getText().toString());
-
+                        //boolean isUpdated = myDb.updateRecipe(edit_recipe_id.getText().toString(), edit_recipe_name.getText().toString());
+                        boolean isUpdated = false;
                         if(isUpdated == true)
                             toastMessage("Updated.");
                         else
@@ -129,14 +110,26 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String[] ingredients = new String[2];
-                        ingredients[0] = "egg";
-                        ingredients[1] = "pasta";
-                        ArrayList<String> result = myDb.getRecipeNamesFromIngredients(ingredients);
+                        ArrayList<String> ingredients = new ArrayList<>();
+                        ingredients.add("egg");
+                        ingredients.add("pasta");
+
+                        ArrayList<String[]> result = myDb.getRecipesFromIngredients(ingredients);
 
                         for (int i = 0; i < result.size(); i++) {
-                            Log.d("Get_Recipe_Data", result.get(i), null);
+                            String[] row = result.get(i);
+                            String srow = "(" + row[0] + ", " + row[1] + ", " + row[2] + ")";
+                            Log.d("GET_RECIPE_DATA", srow, null);
                         }
+
+                        String[] result2 = myDb.getRecipeByID("10");
+                        String srow = "(" + result2[0] + ", " + result2[1] + ", " + result2[2] + ", " + result2[3] + ")";
+                        Log.d("GET_RECIPE_DATA", srow, null);
+
+                        String[] result3 = myDb.getRecipeByID("1000");
+                        String srow2 = "(" + result3[0] + ", " + result3[1] + ", " + result3[2]+ ", " + result2[3] + ")";
+                        Log.d("GET_RECIPE_DATA", srow2, null);
+
                     }
                 }
         );
@@ -148,9 +141,51 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean isInserted = myDb.addIngredient(edit_ing_name.getText().toString());
+                        ArrayList<String[]> ing = new ArrayList<>();
+                        String[] ing1 = new String[3];
+                        String[] ing2 = new String[3];
+                        String[] ing3 = new String[3];
+                        ing1[0] = "3";
+                        ing1[1] = "eggs";
+                        ing1[2] = "6";
+                        ing2[0] = "1";
+                        ing2[1] = "tea leaves";
+                        ing2[2] = "2 tbs";
+                        ing3[0] = "10";
+                        ing3[1] = "cinnamon stick";
+                        ing3[2] = "1 piece";
+                        ing.add(ing1);
+                        ing.add(ing2);
+                        ing.add(ing3);
+                        boolean isInserted1 = myDb.addIngredientsToRecipe("3", ing);
 
-                        if(isInserted == true)
+                        ing.clear();
+                        ing1[0] = "1013";
+                        ing1[1] = "egg";
+                        ing1[2] = "1";
+                        ing2[0] = "21";
+                        ing2[1] = "pesto";
+                        ing2[2] = "485 mL";
+                        ing3[0] = "11123";
+                        ing3[1] = "pasta";
+                        ing3[2] = "50 g";
+                        ing.add(ing1);
+                        ing.add(ing2);
+                        ing.add(ing3);
+                        boolean isInserted2 = myDb.addIngredientsToRecipe("12", ing);
+
+                        ing.clear();
+                        ing2[0] = "21";
+                        ing2[1] = "pesto";
+                        ing2[2] = "455 mL";
+                        ing3[0] = "11123";
+                        ing3[1] = "penne pasta";
+                        ing3[2] = "100 g";
+                        ing.add(ing2);
+                        ing.add(ing3);
+                        boolean isInserted3 = myDb.addIngredientsToRecipe("13", ing);
+
+                        if(isInserted1 || isInserted2 || isInserted3)
                             toastMessage("Ingre. inserted");
                         else
                             toastMessage("Ingre. NOT inserted");
@@ -159,16 +194,55 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         );
     }
 
+    public void GetIngredients() {
+        btnGetIngs.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<String[]> result = myDb.getIngredientsFromRecipeID("3");
+
+                        for (int i = 0; i < result.size(); i++) {
+                            String[] row = result.get(i);
+                            String srow = "(" + row[0] + ", " + row[1] + ", " + row[2] + ")";
+                            Log.d("GET_ING_DATA", srow, null);
+                        }
+                    }
+                }
+        );
+    }
+
+    public void GetSteps() {
+        btnGetSteps.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<String[]> result = myDb.getStepsFromRecipeID("3");
+
+                        for (int i = 0; i < result.size(); i++) {
+                            String[] row = result.get(i);
+                            String srow = "(" + row[0] + ", " + row[1] + ")";
+                            Log.d("GET_STEPS_DATA", srow, null);
+                        }
+                    }
+                }
+        );
+    }
+
+
     // Listener for add Recipe button
     public void AddRecipe() {
         btnAddRecipe.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean isInserted = myDb.addRecipe(edit_recipe_id.getText().toString(),
-                                                            edit_recipe_name.getText().toString());
+                        boolean isInserted1 = myDb.addRecipe("3", "tea eggs", "20 minutes", "breakfast, asian");
+                        boolean isInserted2 = myDb.addRecipe("10", "seafood linguini", "45 minutes", "pasta, dinner, seafood");
+                        boolean isInserted3 = myDb.addRecipe("11", "chicken noodle soup", "120 minutes", "soup");
+                        boolean isInserted4 = myDb.addRecipe("7", "tomatoe soup", "50 minutes", "soup");
+                        boolean isInserted5 = myDb.addRecipe("12", "pesto linguini", "50 minutes", "pasta");
+                        boolean isInserted6 = myDb.addRecipe("13", "pesto penne", "50 minutes", "pasta");
 
-                        if(isInserted == true)
+                        if(isInserted1 || isInserted2 || isInserted3 || isInserted4 || isInserted5 || isInserted6)
                             toastMessage("Recipe inserted");
                         else
                             toastMessage("Recipe NOT inserted");
@@ -183,14 +257,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean isInserted = myDb.addStep(edit_step_no.getText().toString(),
-                                                          edit_step_desc.getText().toString(),
-                                                          edit_step_recipe.getText().toString());
+                        myDb.addStep("1", "Add water and eggs to pot.", "3");
+                        myDb.addStep("2", "Boil for 15 minutes.", "3");
+                        myDb.addStep("3", "Turn off heat, crack egg shells.", "3");
+                        myDb.addStep("4", "Add tea leaves, cinnamon stick, and salt (to taste) into pot.", "3");
+                        myDb.addStep("1", "Add pesto sauce into pan.", "12");
+                        myDb.addStep("3", "Heat pan to a simmer.", "12");
+                        myDb.addStep("2", "Cook pasta.", "12");
 
+                        //boolean isInserted = myDb.addStep(edit_step_no.getText().toString()
+
+                        /*
                         if(isInserted == true)
                             toastMessage("Step inserted");
                         else
                             toastMessage("Step NOT inserted");
+
+                         */
                     }
                 }
         );
@@ -203,6 +286,82 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     @Override
                     public void onClick(View v) {
                         myDb.refreshDB();
+                    }
+                }
+        );
+    }
+
+    public void AddUser(){
+        btnAddUser.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int result_id = myDb.addUser("panda123", "secret@123");
+
+                        toastMessage(Integer.toString(result_id));
+                    }
+                }
+        );
+    }
+
+    public void GetUser(){
+        btnGetUser.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String[] result = myDb.getUser("panda123");
+                        toastMessage("Welcome user #" + result[0] + " : " + result[1] + ", PW: " + result[2]);
+                    }
+                }
+        );
+    }
+
+
+    public void AddToFavourite(){
+        btnAddFavorite.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //boolean isInserted1 = myDb.addFavoriteRecipe("panda123", "secret@123");
+                        myDb.addFavoriteRecipe("1", "3");
+                        myDb.addFavoriteRecipe("1", "7");
+                    }
+                }
+        );
+    }
+
+    public void RemoveFavourite(){
+        btnRemoveFavorite.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isInserted1 = myDb.removeFavoriteRecipe("1", "7");
+                        boolean isInserted2 = myDb.removeFavoriteRecipe("1", "1000");
+
+                        if(isInserted1)
+                            Log.d("TESTING", "Removed recipe 7.");
+                        if(isInserted2)
+                            Log.d("TESTING", "Removed recipe 1000.");
+                    }
+                }
+        );
+    }
+
+    public void GetFavouriteRecipes(){
+        btnGetFavorite.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<String> ingredients = new ArrayList<>();
+                        ingredients.add("egg");
+                        ingredients.add("pasta");
+                        ArrayList<String[]> result = myDb.getFavoriteRecipesFromIngredients("1", ingredients);
+
+                        for (int i = 0; i < result.size(); i++) {
+                            String[] row = result.get(i);
+                            String srow = "(" + row[0] + ", " + row[1] + ", " + row[2] + ")";
+                            Log.d("GET_F_RECIPE_DATA", srow, null);
+                        }
                     }
                 }
         );
