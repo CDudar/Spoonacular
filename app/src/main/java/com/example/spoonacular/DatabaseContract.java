@@ -3,7 +3,7 @@ package com.example.spoonacular;
 import android.provider.BaseColumns;
 
 public final class DatabaseContract {
-    public static final  int    DATABASE_VERSION   = 3;
+    public static final  int    DATABASE_VERSION   = 4;
     public static final  String DATABASE_NAME      = "spoonacular.db";
 
     // To prevent someone from accidentally instantiating the contract class,
@@ -15,12 +15,14 @@ public final class DatabaseContract {
         public static final String TABLE_NAME = "recipe";
         public static final String RECIPE_ID = "recipe_id";
         public static final String RECIPE_NAME = "recipe_name";
-
-        // MAKE RECIPE_ID UNIQUE ?!?!?!
+        public static final String COOK_TIME = "cook_time";
+        public static final String KEYWORD = "keywords";
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 RECIPE_ID + " INTEGER PRIMARY KEY NOT NULL, " +
-                RECIPE_NAME + " TEXT)";
+                RECIPE_NAME + " TEXT, " +
+                COOK_TIME + " TEXT, " +
+                KEYWORD + " TEXT)";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
@@ -34,7 +36,7 @@ public final class DatabaseContract {
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 STEP_NO + " INTEGER NOT NULL, " +
                 DESCRIPTION + " TEXT, " +
-                RECIPE_ID + " INTEGER, " +
+                RECIPE_ID + " INTEGER NOT NULL, " +
                 "FOREIGN KEY (" + RECIPE_ID + ") REFERENCES " + Recipe.TABLE_NAME + "(" + Recipe.RECIPE_ID + ") " +
                     "ON UPDATE CASCADE " +
                     "ON DELETE CASCADE, " +
@@ -49,7 +51,7 @@ public final class DatabaseContract {
         public static final String NAME = "ingredient_name";
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
-                ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
                 NAME + " TEXT NOT NULL)";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -62,8 +64,8 @@ public final class DatabaseContract {
         public static final String QUANTITY = "quantity";
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
-                INGREDIENT_ID + " INTEGER, " +
-                RECIPE_ID + " INTEGER, " +
+                INGREDIENT_ID + " INTEGER NOT NULL, " +
+                RECIPE_ID + " INTEGER NOT NULL, " +
                 QUANTITY + " TEXT, " +
                 "FOREIGN KEY (" + RECIPE_ID + ") REFERENCES " + Recipe.TABLE_NAME + "(" + Recipe.RECIPE_ID + ") " +
                     "ON UPDATE CASCADE " +
@@ -84,7 +86,7 @@ public final class DatabaseContract {
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                USERNAME + " TEXT NOT NULL, " +
+                USERNAME + " TEXT NOT NULL UNIQUE, " +
                 PASSWORD + " TEXT NOT NULL)" ;
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -96,8 +98,8 @@ public final class DatabaseContract {
         public static final String RECIPE_ID = "recipe_id";
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
-                USER_ID + " INTEGER, " +
-                RECIPE_ID + " INTEGER, " +
+                USER_ID + " INTEGER NOT NULL, " +
+                RECIPE_ID + " INTEGER NOT NULL, " +
                 "FOREIGN KEY (" + RECIPE_ID + ") REFERENCES " + Recipe.TABLE_NAME + "(" + Recipe.RECIPE_ID + ") " +
                     "ON UPDATE CASCADE " +
                     "ON DELETE CASCADE, " +
@@ -109,34 +111,4 @@ public final class DatabaseContract {
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-    public static class Keyword implements BaseColumns {
-        public static final String TABLE_NAME = "keyword";
-        public static final String ID = "keyword_id";
-        public static final String KEYWORD = "keyword";
-
-        public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
-                ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                KEYWORD + " TEXT)";
-
-        public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
-    }
-
-    public static class Keyword_Recipe implements BaseColumns {
-        public static final String TABLE_NAME = "keyword_recipe";
-        public static final String KEYWORD_ID = "keyword_id";
-        public static final String RECIPE_ID = "recipe_id";
-
-        public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
-                KEYWORD_ID + " INTEGER, " +
-                RECIPE_ID + " INTEGER, " +
-                "FOREIGN KEY (" + RECIPE_ID + ") REFERENCES " + Recipe.TABLE_NAME + "(" + Recipe.RECIPE_ID + ") " +
-                    "ON UPDATE CASCADE " +
-                    "ON DELETE CASCADE, " +
-                "FOREIGN KEY (" + KEYWORD_ID + ") REFERENCES " + Keyword.TABLE_NAME + "(" + Keyword.ID + ") " +
-                    "ON UPDATE CASCADE " +
-                    "ON DELETE CASCADE, " +
-                "PRIMARY KEY (" + KEYWORD_ID + ", " + RECIPE_ID + "))";
-
-        public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
-    }
 }
