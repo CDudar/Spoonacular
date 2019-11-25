@@ -1,13 +1,14 @@
 package com.example.spoonacular;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,22 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.lang.reflect.Array;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.ArrayList;
 
 
@@ -42,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         USER
     }
 
-    public Mode mode = Mode.DEV;
+    public Mode mode = Mode.USER;
 
     int currentSelectedItemId;
 
@@ -462,28 +449,126 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //if entered string in ingredients
         //System.out.println("user submitted " + string.toString());
 
+        q.addIngredient(string);
+
         if(mode == Mode.DEV){
-            q.addIngredient(string);
             q.performQuery();
+            addRecipeListToDB(q.getResults());
         }
 
         else if(mode == Mode.USER){
+         //   ArrayList<String[]> queryResults =
 
             TextView hv = new TextView(getApplicationContext());
             hv.setText(string);
             hv.setPadding(20, 5, 0, 0);
             hv.setGravity(Gravity.CENTER | Gravity.CENTER);
+            hv.setOnClickListener(horizontalScrollHandler);
             searchFrag.getQueriedIngredientsLayout().addView(hv);
 
-            //for(int i = 0; i < recipes.size(); i++){
-             //   //Create the recipe TV and append to vv
+            ArrayList<String[]> queryResults = myDb.getRecipesFromIngredients(q.getIngredients());
 
-            //}
+            System.out.println(queryResults.size() + " ================");
 
+            addRecipeViews(queryResults);
 
         }
 
     }
+
+    public void addRecipeViews(ArrayList<String[]> queryResults){
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        TextView test = new TextView(getApplicationContext());
+        test.setText("test");
+        searchFrag.getRecipeResultsLayout().addView(test);
+        for(int i = 0 ; i < queryResults.size(); i++){
+
+            View recipeResult = inflater.inflate(R.layout.recipe_search_result, null);
+
+
+            TextView title = recipeResult.findViewById(R.id.title);
+            title.setText("recipe title");
+            TextView cookTime = recipeResult.findViewById(R.id.cooktime);
+            cookTime.setText("recipe cook time");
+
+            searchFrag.getRecipeResultsLayout().addView(recipeResult);
+
+        }
+
+
+    }
+
+
+View.OnClickListener horizontalScrollHandler = new View.OnClickListener(){
+        public void onClick(View v){
+
+            q.removeIngredient(((TextView) v).getText().toString());
+            searchFrag.getQueriedIngredientsLayout().removeView(v);
+
+        }
+    };
+
+
+    public void addRecipeListToDB(ArrayList<Recipe> results){
+
+
+        for(int i = 0 ; i < results.size(); i++){
+               addRecipeToDB(results.get(i));
+        }
+    }
+
+
+    public void addRecipeToDB(Recipe recipe){
+
+        ArrayList<String> keywords = recipe.getKeywords();
+        String keywordString = "";
+        if(keywords.size() > 0) {
+
+            for (int i = 0; i < keywords.size() - 1; i++) {
+                keywordString += keywords.get(i);
+                keywordString += ", ";
+            }
+            keywordString += keywords.get(keywords.size() - 1);
+        }
+
+        myDb.addRecipe(recipe.id, recipe.title, recipe.cookTime, keywordString);
+
+        addStepsToDB(recipe);
+        addIngredientsToDB(recipe);
+
+    }
+
+
+    public void addIngredientsToDB(Recipe recipe){
+
+
+        ArrayList<RecipeIngredient> ingredients = recipe.getRecipeIngredients();
+        ArrayList<String[]> ingredientsForDB = new ArrayList<>();
+        for(int i = 0 ; i < recipe.getRecipeIngredients().size(); i++){
+            RecipeIngredient currentIngredient = ingredients.get(i);
+            String[] ing_array = new String[3];
+            ing_array[0] = currentIngredient.getIngredientID();
+            ing_array[1] = currentIngredient.getName();
+            ing_array[2] = currentIngredient.getQuantity();
+            ingredientsForDB.add(ing_array);
+
+        }
+
+        myDb.addIngredientsToRecipe(recipe.getId(), ingredientsForDB);
+
+    }
+
+    public void addStepsToDB(Recipe recipe){
+
+        ArrayList<RecipeStep> recipeSteps = recipe.getRecipeSteps();
+        for(int i = 0; i < recipe.getRecipeSteps().size(); i++){
+            myDb.addStep(recipeSteps.get(i).getStepNo(), recipeSteps.get(i).getDescription(), recipe.getId());
+        }
+
+    }
+
 
     @Override
     public void onFragmentInteraction(String string) {

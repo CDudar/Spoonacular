@@ -48,6 +48,8 @@ public class SpoonacularQuery {
         ingredients.add(ingredient);
     }
 
+    public void removeIngredient(String ingredient) { ingredients.remove(ingredient); }
+
 
     public String buildSearchRecipesURLString(){
         String url;
@@ -195,6 +197,13 @@ public class SpoonacularQuery {
                               else if(key.toString().equals("readyInMinutes")){
                                 results.get(recipeIdx).setCookTime(currObj.get(key).toString());
                             }
+                              else if(key.equals("dishTypes")){
+                                JSONArray keywordArray = new JSONArray((currObj.get(key).toString()));
+                                for(int i = 0 ; i <  keywordArray.length(); i++){
+                                    String keyword = keywordArray.get(i).toString();
+                                    results.get(recipeIdx).getKeywords().add(keyword);
+                                }
+                            }
                               else if(key.toString().equals("extendedIngredients")){
                                   JSONArray ingrArray = new JSONArray(currObj.get(key).toString());
                                   for(int i = 0 ; i < ingrArray.length(); i++){
@@ -281,6 +290,14 @@ public class SpoonacularQuery {
 
     }
 
+    public ArrayList<Recipe> getResults(){
+        return results;
+    }
+
+    public ArrayList<String> getIngredients(){
+        return ingredients;
+    }
+
     public void performQuery(){
 
         if(ingredients.size() == 0)
@@ -297,10 +314,11 @@ public class SpoonacularQuery {
             specificRecipeURL = buildSpecificRecipeURLString(results.get(i).getId());
             populateRecipeObject(i, specificRecipeURL);
 
-            results.get(i).ingredientsPrinter();
+
             System.out.println(specificRecipeURL);
             System.out.println(results.get(i).getTitle());
-
+            results.get(i).keywordsPrinter();
+            //results.get(i).ingredientsPrinter();
 
 
         }

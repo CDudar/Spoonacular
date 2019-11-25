@@ -7,7 +7,7 @@ public class Recipe {
 
     String id;
     String title;
-    ArrayList<RecipeStep>  recipeSteps = new ArrayList<RecipeStep>();
+    ArrayList<RecipeStep>  recipeSteps = new ArrayList<>();
     ArrayList<RecipeIngredient> recipeIngredients = new ArrayList<>();
     ArrayList<String> keywords = new ArrayList<>();
     String cookTime;
@@ -69,6 +69,12 @@ public class Recipe {
             System.out.println(recipeIngredients.get(i).getIngredientID());
             System.out.println(recipeIngredients.get(i).getName());
             System.out.println(recipeIngredients.get(i).getQuantity());
+        }
+    }
+
+    public void keywordsPrinter(){
+        for(int i = 0 ; i < keywords.size(); i++){
+            System.out.println(keywords.get(i));
         }
     }
 
