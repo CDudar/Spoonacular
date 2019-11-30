@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,10 +19,8 @@ public class RecipeFragment extends Fragment {
 
     MainActivity main;
     DatabaseHelper myDB;
-
-    TextView title;
-    TextView ingredients;
-    TextView steps;
+    LinearLayout recipeLayout;
+    String recipeInfo;
 
 
     public void onAttach(Context context) {
@@ -46,26 +45,41 @@ public class RecipeFragment extends Fragment {
 
         myDB = main.getDBHelper();
 
-        title = rootView.findViewById(R.id.recipe_title);
-        ingredients = rootView.findViewById(R.id.ingredients);
-        steps = rootView.findViewById(R.id.steps);
+        recipeLayout = rootView.findViewById(R.id.recipeLayout);
 
-        populateTitle(id);
-        populateIngredients(id);
-        populateSteps(id);
 
+        String title = getTitle(id);
+        String ingredients = getIngredients(id);
+        String steps = getSteps(id);
+
+
+
+        TextView titleTextView = new TextView(getActivity());
+        titleTextView.setText(title);
+
+        TextView ingredientsTextView = new TextView(getActivity());
+        ingredientsTextView.setText(ingredients);
+
+        TextView stepsTextView = new TextView(getActivity());
+        stepsTextView.setText(steps);
+
+        TextView recipeInfo = new TextView(getActivity());
+//        recipeInfo.setText(title +  ingredients + steps);
+
+        recipeLayout.addView(titleTextView);
+        recipeLayout.addView(ingredientsTextView);
+        recipeLayout.addView(stepsTextView);
 
         return rootView;
 
     }
 
-    private void populateTitle(String id) {
+    private String getTitle(String id) {
         String[] recipeResults = myDB.getRecipeByID(id);
-
-        title.setText(recipeResults[1]);
+        return recipeResults[1] + "\n";
     }
 
-    private void populateIngredients(String id) {
+    private String getIngredients(String id) {
         ArrayList<String[]> ingredientResults = myDB.getIngredientsFromRecipeID(id);
         String ingredientsString = "";
 
@@ -76,10 +90,10 @@ public class RecipeFragment extends Fragment {
             ingredientsString += "\n";
 
         }
-        ingredients.setText(ingredientsString);
+        return ingredientsString;
     }
 
-    private void populateSteps(String id) {
+    private String getSteps(String id) {
         ArrayList<String[]> stepsResults = myDB.getStepsFromRecipeID(id);
         String stepsString = "";
 
@@ -87,14 +101,19 @@ public class RecipeFragment extends Fragment {
             String[] currentStep = stepsResults.get(i);
             stepsString += currentStep[0] + ". ";
             stepsString += currentStep[1];
-            stepsString += "\n";
+            stepsString += "\n\n";
         }
 
-        steps.setText(stepsString);
-
-
+        return stepsString;
     }
 
+    public LinearLayout getRecipeLayout(){
+        return recipeLayout;
+    }
+
+    public String getRecipeInfo(){
+        return recipeInfo;
+    }
 
 }
 

@@ -218,6 +218,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             createRecipeFragment(id.getText().toString());
 
 
+
+
         }
     };
 
@@ -234,6 +236,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 .beginTransaction()
                 .replace(R.id.fragment_container, recipeFragment, "recipe")
                 .commit();
+
+
+
 
     }
 
