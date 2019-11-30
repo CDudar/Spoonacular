@@ -1,9 +1,9 @@
 package com.example.spoonacular;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,27 +24,30 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, InteractionListener {
 
+    enum Favorites{
+        ON,
+        OFF
+    }
+
     enum Mode{
         DEV,
         USER
     }
 
+    public Favorites favorites = Favorites.OFF;
+
     public Mode mode = Mode.USER;
-
-    int currentSelectedItemId;
-
-    private SparseArray<Fragment.SavedState> savedStates = new SparseArray<Fragment.SavedState>();
 
     // database variables
     DatabaseHelper myDb;
     Button btnAddIng, btnRestartDB, btnAddRecipe, btnAddStep, btnDeleteRecipe, btnUpdateRecipe, btnGetRecipe, btnAddUser, btnGetIngs, btnGetSteps, btnAddFavorite, btnRemoveFavorite, btnGetUser, btnGetFavorite;
 
+    BottomNavigationView navView;
+
     SearchFragment searchFrag;
     AccountFragment accountFrag;
     SpoonacularQuery q = new SpoonacularQuery(this);
-    //Fragment favoritesFrag;
 
-    private TextView mTextViewResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +61,285 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
 
-        navView.setSelectedItemId(R.id.navigation_search);
-        swapFragments(R.id.navigation_search, "search");
+        swapFragments("account");
 
         // create a DB
         myDb = new DatabaseHelper(this);
     }
+
+    private void toastMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        Fragment fragment = null;
+
+        switch(menuItem.getItemId()){
+            case R.id.navigation_account:
+                swapFragments("account");
+                break;
+
+            case R.id.navigation_search:
+                swapFragments("search");
+                break;
+
+            case R.id.navigation_favorites:
+                swapFragments("favorites");
+                break;
+        }
+
+        return true;
+    }
+
+
+    public void swapFragments(String tag){
+        if(getSupportFragmentManager().findFragmentByTag("tag") == null){
+            createFragment(tag);
+        }
+    }
+
+
+    public void createFragment(String tag){
+        Fragment fragment =  null;
+        if(tag == "account"){
+            if(accountFrag == null)
+                accountFrag = new AccountFragment();
+            fragment = accountFrag;
+        }
+        else if(tag == "search"){
+            if(searchFrag == null)
+                searchFrag = new SearchFragment();
+            fragment = searchFrag ;
+
+        }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment, tag)
+                .commit();
+
+    }
+
+
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        System.out.println("saving in activity");
+        getSupportFragmentManager().putFragment(outState, "search", searchFrag);
+    }
+
+
+
+    public void onFragmentSubmission(String string){
+        //if entered string in ingredients
+        //System.out.println("user submitted " + string.toString());
+
+        q.addIngredient(string);
+        searchFrag.getSearch().setQuery("", false);
+        searchFrag.getSearch().clearFocus();
+
+        if(mode == Mode.DEV){
+            q.performQuery();
+            addRecipeListToDB(q.getResults());
+        }
+
+        else if(mode == Mode.USER){
+
+            addQueriedIngredientsView(string);
+            ArrayList<String[]> queryResults = myDb.getRecipesFromIngredients(q.getIngredients());
+            addRecipeViews(queryResults);
+
+        }
+
+    }
+
+    @Override
+    public void onFragmentInteraction(String string) {
+        System.out.println("User entering " + string.toString());
+    }
+
+
+    public void addQueriedIngredientsView(String s){
+
+        TextView hv = new TextView(getApplicationContext());
+        hv.setText(s);
+        hv.setPadding(20, 5, 0, 0);
+        hv.setGravity(Gravity.CENTER | Gravity.CENTER);
+        hv.setOnClickListener(horizontalScrollHandler);
+        searchFrag.getQueriedIngredientsLayout().addView(hv);
+
+
+    }
+
+
+
+
+    public void onFavoritesToggle(){
+
+        toggleFavorites();
+        toggleFavoritesBtn();
+        System.out.println(favorites.toString());
+    }
+
+    public void toggleFavoritesBtn() {
+
+        if(favorites == Favorites.ON) {
+            searchFrag.getBtnFavorites().setBackgroundColor(Color.GREEN);
+        }
+        else{
+            searchFrag.getBtnFavorites().setBackgroundColor(Color.RED);
+        }
+
+    }
+    public void toggleFavorites(){
+        if(favorites == Favorites.OFF){
+            favorites = Favorites.ON;
+            return;
+        }
+        favorites = Favorites.OFF;
+    }
+
+
+
+    View.OnClickListener verticalScrollHandler = new View.OnClickListener(){
+        public void onClick(View v){
+
+            View chosenRecipe = v;
+
+            TextView id = chosenRecipe.findViewById(R.id.recipeID);
+
+            createRecipeFragment(id.getText().toString());
+
+
+        }
+    };
+
+
+    public void createRecipeFragment(String id){
+
+        Fragment recipeFragment = new RecipeFragment();
+        Bundle args = new Bundle();
+        args.putString("id", id);
+
+        recipeFragment.setArguments(args);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, recipeFragment, "recipe")
+                .commit();
+
+    }
+
+    View.OnClickListener horizontalScrollHandler = new View.OnClickListener(){
+        public void onClick(View v){
+
+            q.removeIngredient(((TextView) v).getText().toString());
+            searchFrag.getQueriedIngredientsLayout().removeView(v);
+            ArrayList<String[]> queryResults = myDb.getRecipesFromIngredients(q.getIngredients());
+            addRecipeViews(queryResults);
+        }
+    };
+
+    public void addRecipeViews(ArrayList<String[]> queryResults){
+        searchFrag.getRecipeResultsLayout().removeAllViews();
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        for(int i = 0 ; i < queryResults.size(); i++){
+
+            View recipeResult = inflater.inflate(R.layout.recipe_search_result, null);
+
+            recipeResult.setOnClickListener(verticalScrollHandler);
+
+            TextView id = recipeResult.findViewById(R.id.recipeID);
+            id.setText(queryResults.get(i)[0]);
+            TextView title = recipeResult.findViewById(R.id.title);
+            title.setText(queryResults.get(i)[1]);
+            TextView cookTime = recipeResult.findViewById(R.id.cooktime);
+            cookTime.setText(queryResults.get(i)[2] + " minutes");
+
+            searchFrag.getRecipeResultsLayout().addView(recipeResult);
+
+        }
+
+
+    }
+
+
+
+    public void addRecipeListToDB(ArrayList<Recipe> results){
+
+
+        for(int i = 0 ; i < results.size(); i++){
+               addRecipeToDB(results.get(i));
+        }
+    }
+
+
+    public void addRecipeToDB(Recipe recipe){
+
+        ArrayList<String> keywords = recipe.getKeywords();
+        String keywordString = "";
+        if(keywords.size() > 0) {
+
+            for (int i = 0; i < keywords.size() - 1; i++) {
+                keywordString += keywords.get(i);
+                keywordString += ", ";
+            }
+            keywordString += keywords.get(keywords.size() - 1);
+        }
+
+        myDb.addRecipe(recipe.id, recipe.title, recipe.cookTime, keywordString);
+
+        addStepsToDB(recipe);
+        addIngredientsToDB(recipe);
+
+    }
+
+
+    public void addIngredientsToDB(Recipe recipe){
+
+
+        ArrayList<RecipeIngredient> ingredients = recipe.getRecipeIngredients();
+        ArrayList<String[]> ingredientsForDB = new ArrayList<>();
+        for(int i = 0 ; i < recipe.getRecipeIngredients().size(); i++){
+            RecipeIngredient currentIngredient = ingredients.get(i);
+            String[] ing_array = new String[3];
+            ing_array[0] = currentIngredient.getIngredientID();
+            ing_array[1] = currentIngredient.getName();
+            ing_array[2] = currentIngredient.getQuantity();
+            ingredientsForDB.add(ing_array);
+
+        }
+
+        myDb.addIngredientsToRecipe(recipe.getId(), ingredientsForDB);
+
+    }
+
+    public void addStepsToDB(Recipe recipe){
+
+        ArrayList<RecipeStep> recipeSteps = recipe.getRecipeSteps();
+        for(int i = 0; i < recipe.getRecipeSteps().size(); i++){
+            myDb.addStep(recipeSteps.get(i).getStepNo(), recipeSteps.get(i).getDescription(), recipe.getId());
+        }
+
+    }
+
+
+    public DatabaseHelper getDBHelper(){
+        return myDb;
+    }
+
+
+    /////////////////////////////////////////////////////
+
 
     public void DeleteRecipe() {
         btnDeleteRecipe.setOnClickListener(
@@ -246,6 +519,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         );
     }
 
+
+
+
     // Listener for add Step button
     public void AddStep() {
         btnAddStep.setOnClickListener(
@@ -273,6 +549,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
         );
     }
+
+
 
     // Listener for restart / upgrading DB
     public void restartDB() {
@@ -360,222 +638,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     }
                 }
         );
-    }
-
-
-    private void toastMessage(String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-        Fragment fragment = null;
-
-
-        switch(menuItem.getItemId()){
-            case R.id.navigation_account:
-                swapFragments(menuItem.getItemId(), "account");
-                break;
-
-            case R.id.navigation_search:
-                swapFragments(menuItem.getItemId(), "search");
-                break;
-
-            case R.id.navigation_favorites:
-                swapFragments(menuItem.getItemId(), "favorites");
-                break;
-        }
-
-        return true;
-    }
-
-
-    public void swapFragments(int itemId, String tag){
-        if(getSupportFragmentManager().findFragmentByTag("tag") == null){
-            saveCurrentFragmentState(itemId);
-            createFragment(tag, itemId);
-        }
-    }
-
-
-    public void createFragment(String tag, int itemId){
-        Fragment fragment =  null;
-        if(tag == "account"){
-            if(accountFrag == null)
-                accountFrag = new AccountFragment();
-            fragment = accountFrag;
-        }
-        else if(tag == "search"){
-            if(searchFrag == null)
-                searchFrag = new SearchFragment();
-            fragment = searchFrag ;
-        }
-        else if(tag == "favorites"){
-            fragment = new FavoritesFragment();
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment, tag)
-                .commit();
-    }
-
-    public void saveCurrentFragmentState(int itemId){
-
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-
-        if(currentFragment != null){
-            System.out.println(currentFragment.getClass().getSimpleName());
-            System.out.println(currentFragment.hashCode());
-           getSupportFragmentManager().saveFragmentInstanceState(currentFragment);
-
-        }
-        currentSelectedItemId = itemId;
-
-    }
-
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        System.out.println("saving in activity");
-        getSupportFragmentManager().putFragment(outState, "search", searchFrag);
-    }
-
-
-
-    public void onFragmentSubmission(String string){
-        //if entered string in ingredients
-        //System.out.println("user submitted " + string.toString());
-
-        q.addIngredient(string);
-
-        if(mode == Mode.DEV){
-            q.performQuery();
-            addRecipeListToDB(q.getResults());
-        }
-
-        else if(mode == Mode.USER){
-         //   ArrayList<String[]> queryResults =
-
-            TextView hv = new TextView(getApplicationContext());
-            hv.setText(string);
-            hv.setPadding(20, 5, 0, 0);
-            hv.setGravity(Gravity.CENTER | Gravity.CENTER);
-            hv.setOnClickListener(horizontalScrollHandler);
-            searchFrag.getQueriedIngredientsLayout().addView(hv);
-
-            ArrayList<String[]> queryResults = myDb.getRecipesFromIngredients(q.getIngredients());
-
-            System.out.println(queryResults.size() + " ================");
-
-            addRecipeViews(queryResults);
-
-        }
-
-    }
-
-    public void addRecipeViews(ArrayList<String[]> queryResults){
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        TextView test = new TextView(getApplicationContext());
-        test.setText("test");
-        searchFrag.getRecipeResultsLayout().addView(test);
-        for(int i = 0 ; i < queryResults.size(); i++){
-
-            View recipeResult = inflater.inflate(R.layout.recipe_search_result, null);
-
-
-            TextView title = recipeResult.findViewById(R.id.title);
-            title.setText("recipe title");
-            TextView cookTime = recipeResult.findViewById(R.id.cooktime);
-            cookTime.setText("recipe cook time");
-
-            searchFrag.getRecipeResultsLayout().addView(recipeResult);
-
-        }
-
-
-    }
-
-
-View.OnClickListener horizontalScrollHandler = new View.OnClickListener(){
-        public void onClick(View v){
-
-            q.removeIngredient(((TextView) v).getText().toString());
-            searchFrag.getQueriedIngredientsLayout().removeView(v);
-
-        }
-    };
-
-
-    public void addRecipeListToDB(ArrayList<Recipe> results){
-
-
-        for(int i = 0 ; i < results.size(); i++){
-               addRecipeToDB(results.get(i));
-        }
-    }
-
-
-    public void addRecipeToDB(Recipe recipe){
-
-        ArrayList<String> keywords = recipe.getKeywords();
-        String keywordString = "";
-        if(keywords.size() > 0) {
-
-            for (int i = 0; i < keywords.size() - 1; i++) {
-                keywordString += keywords.get(i);
-                keywordString += ", ";
-            }
-            keywordString += keywords.get(keywords.size() - 1);
-        }
-
-        myDb.addRecipe(recipe.id, recipe.title, recipe.cookTime, keywordString);
-
-        addStepsToDB(recipe);
-        addIngredientsToDB(recipe);
-
-    }
-
-
-    public void addIngredientsToDB(Recipe recipe){
-
-
-        ArrayList<RecipeIngredient> ingredients = recipe.getRecipeIngredients();
-        ArrayList<String[]> ingredientsForDB = new ArrayList<>();
-        for(int i = 0 ; i < recipe.getRecipeIngredients().size(); i++){
-            RecipeIngredient currentIngredient = ingredients.get(i);
-            String[] ing_array = new String[3];
-            ing_array[0] = currentIngredient.getIngredientID();
-            ing_array[1] = currentIngredient.getName();
-            ing_array[2] = currentIngredient.getQuantity();
-            ingredientsForDB.add(ing_array);
-
-        }
-
-        myDb.addIngredientsToRecipe(recipe.getId(), ingredientsForDB);
-
-    }
-
-    public void addStepsToDB(Recipe recipe){
-
-        ArrayList<RecipeStep> recipeSteps = recipe.getRecipeSteps();
-        for(int i = 0; i < recipe.getRecipeSteps().size(); i++){
-            myDb.addStep(recipeSteps.get(i).getStepNo(), recipeSteps.get(i).getDescription(), recipe.getId());
-        }
-
-    }
-
-
-    @Override
-    public void onFragmentInteraction(String string) {
-        //System.out.println("User entering " + string.toString());
-
-
-
     }
 
 

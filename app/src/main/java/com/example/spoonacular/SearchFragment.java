@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -19,6 +20,8 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     View rootView;
     SearchView search;
     HorizontalScrollView queriedIngredients;
+    Button btnFavorites;
+
     LinearLayout queriedIngredientsLayout;
     LinearLayout recipeResultsLayout;
 
@@ -44,6 +47,9 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
 
         System.out.println("Created search Fragment");
+        btnFavorites = rootView.findViewById(R.id.button_favorites);
+        btnFavorites.setOnClickListener(this);
+
         search = rootView.findViewById(R.id.search);
         search.setOnQueryTextListener(this);
         queriedIngredients = rootView.findViewById(R.id.queriedIngredients);
@@ -77,7 +83,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
 
     public void onClick(View v) {
-        mListener.onFragmentInteraction("hi");
+        mListener.onFavoritesToggle();
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -95,6 +101,14 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
     public LinearLayout getRecipeResultsLayout(){
         return recipeResultsLayout;
+    }
+
+    public SearchView getSearch(){
+        return search;
+    }
+
+    public Button getBtnFavorites(){
+        return btnFavorites;
     }
 }
 
