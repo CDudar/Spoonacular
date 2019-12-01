@@ -2,6 +2,7 @@ package com.example.spoonacular;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,24 +50,32 @@ public class RecipeFragment extends Fragment {
 
 
         String title = getTitle(id);
+        String keywords = getKeywords(id);
         String ingredients = getIngredients(id);
         String steps = getSteps(id);
 
 
-
         TextView titleTextView = new TextView(getActivity());
+        titleTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         titleTextView.setText(title);
 
+        TextView keywordTextView = new TextView(getActivity());
+        keywordTextView.setGravity(Gravity.CENTER_HORIZONTAL);
+        keywordTextView.setText(keywords);
+
         TextView ingredientsTextView = new TextView(getActivity());
+        ingredientsTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         ingredientsTextView.setText(ingredients);
 
         TextView stepsTextView = new TextView(getActivity());
+        stepsTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         stepsTextView.setText(steps);
 
         TextView recipeInfo = new TextView(getActivity());
 //        recipeInfo.setText(title +  ingredients + steps);
 
         recipeLayout.addView(titleTextView);
+        recipeLayout.addView(keywordTextView);
         recipeLayout.addView(ingredientsTextView);
         recipeLayout.addView(stepsTextView);
 
@@ -76,7 +85,12 @@ public class RecipeFragment extends Fragment {
 
     private String getTitle(String id) {
         String[] recipeResults = myDB.getRecipeByID(id);
-        return recipeResults[1] + "\n";
+        return recipeResults[1] + "\n\n";
+    }
+
+    private String getKeywords(String id){
+        String[] keywordResults = myDB.getRecipeByID(id);
+        return keywordResults[3] + "\n\n";
     }
 
     private String getIngredients(String id) {
@@ -107,6 +121,10 @@ public class RecipeFragment extends Fragment {
         return stepsString;
     }
 
+    //public String getKeywords(String id){
+        //ArrayList<String[]> keywordResults = myDB.get
+    //}
+
     public LinearLayout getRecipeLayout(){
         return recipeLayout;
     }
@@ -114,6 +132,8 @@ public class RecipeFragment extends Fragment {
     public String getRecipeInfo(){
         return recipeInfo;
     }
+
+
 
 }
 

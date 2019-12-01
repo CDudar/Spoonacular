@@ -1,7 +1,7 @@
 package com.example.spoonacular;
 
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     SearchFragment searchFrag;
     AccountFragment accountFrag;
     SpoonacularQuery q = new SpoonacularQuery(this);
+
+    int signedInAccount = 0;
 
 
     @Override
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             if(accountFrag == null)
                 accountFrag = new AccountFragment();
             fragment = accountFrag;
+            q.resetIngredients();
         }
         else if(tag == "search"){
             if(searchFrag == null)
@@ -142,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //System.out.println("user submitted " + string.toString());
 
         q.addIngredient(string);
-        searchFrag.getSearch().setQuery("", false);
+        searchFrag.getSearch().setQuery("",false);
         searchFrag.getSearch().clearFocus();
 
         if(mode == Mode.DEV){
@@ -153,12 +156,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         else if(mode == Mode.USER){
 
             addQueriedIngredientsView(string);
-            ArrayList<String[]> queryResults = myDb.getRecipesFromIngredients(q.getIngredients());
+            ArrayList<String[]> queryResults = getQueryResults();
             addRecipeViews(queryResults);
 
         }
 
     }
+
+    public ArrayList<String[]> getQueryResults(){
+
+        ArrayList<String[]> queryResults;
+
+        if(favorites == Favorites.ON){
+            queryResults = myDb.getFavoriteRecipesFromIngredients(Integer.toString(signedInAccount), q.getIngredients());
+        }
+        else{
+            queryResults = myDb.getRecipesFromIngredients(q.getIngredients());
+        }
+
+        return queryResults;
+    }
+
 
     @Override
     public void onFragmentInteraction(String string) {
@@ -188,13 +206,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         System.out.println(favorites.toString());
     }
 
+    @TargetApi(16)
     public void toggleFavoritesBtn() {
 
         if(favorites == Favorites.ON) {
-            searchFrag.getBtnFavorites().setBackgroundColor(Color.GREEN);
+            searchFrag.getBtnFavorites().setBackground(getResources().getDrawable(R.drawable.favorites_on));
         }
         else{
-            searchFrag.getBtnFavorites().setBackgroundColor(Color.RED);
+            searchFrag.getBtnFavorites().setBackground(getResources().getDrawable(R.drawable.favorites_off));
         }
 
     }
@@ -217,14 +236,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             createRecipeFragment(id.getText().toString());
 
-
-
-
         }
     };
 
 
     public void createRecipeFragment(String id){
+
+        q.resetIngredients();
 
         Fragment recipeFragment = new RecipeFragment();
         Bundle args = new Bundle();
@@ -237,17 +255,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 .replace(R.id.fragment_container, recipeFragment, "recipe")
                 .commit();
 
-
-
-
     }
 
     View.OnClickListener horizontalScrollHandler = new View.OnClickListener(){
         public void onClick(View v){
 
             q.removeIngredient(((TextView) v).getText().toString());
+
+            System.out.println(q.getIngredients().size());
+
             searchFrag.getQueriedIngredientsLayout().removeView(v);
-            ArrayList<String[]> queryResults = myDb.getRecipesFromIngredients(q.getIngredients());
+            ArrayList<String[]> queryResults = getQueryResults();
             addRecipeViews(queryResults);
         }
     };
@@ -258,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for(int i = 0 ; i < queryResults.size(); i++){
-
+            System.out.println("Adding views");
             View recipeResult = inflater.inflate(R.layout.recipe_search_result, null);
 
             recipeResult.setOnClickListener(verticalScrollHandler);
@@ -337,9 +355,70 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
+    public void createAccount(String userName, String passWord){
+
+        if(userName.length() > 0 && passWord.length() > 0){
+            myDb.addUser(userName, passWord);
+            toastMessage("Account created");
+        }
+        else{
+            toastMessage("Invalid input");
+        }
+    }
+
+    public void accountScreenListener(View v) {
+
+        String userName = accountFrag.getUserName().getText().toString();
+        String passWord = accountFrag.getPassWord().getText().toString();
+
+        userName.trim();
+        passWord.trim();
+
+        if (v.getId() == (R.id.createAccountButton)) {
+            createAccount(userName, passWord);
+
+        } else if (v.getId() == (R.id.signInOutButton)) {
+
+            if(signedInAccount == 0){
+
+                String[] userResult = myDb.getUser(userName);
+
+                if(userResult != null && userResult[2].equals(passWord)) {
+                    signedInAccount = Integer.parseInt(userResult[0]);
+                    setViewEffectsSignIn();
+                    toastMessage("Signed in as " + userResult[1]);
+                }
+                else{
+                    toastMessage("Username or Password incorrect.");
+                }
+
+            }
+            else{
+                setViewEffectsSignOut();
+                signedInAccount = 0;
+                toastMessage("Signed out");
+            }
+
+
+        }
+    }
+
+    public void setViewEffectsSignOut(){
+        accountFrag.getCreateAccountBtn().setVisibility(View.VISIBLE);
+        accountFrag.getSignInOutBtn().setText("Sign in");
+    }
+    public void setViewEffectsSignIn(){
+        accountFrag.getCreateAccountBtn().setVisibility(View.INVISIBLE);
+        accountFrag.getSignInOutBtn().setText("Sign Out");
+    }
+
 
     public DatabaseHelper getDBHelper(){
         return myDb;
+    }
+
+    public int getSignedInAccount(){
+        return signedInAccount;
     }
 
 

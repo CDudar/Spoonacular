@@ -64,7 +64,7 @@ public class SpoonacularQuery {
             url = url + "+" + ingredients.get(ingredients.size() - 1);
         }
 
-        url = url + "&number=3";
+        url = url + "&number=5";
         url = url + "&apiKey=db9a577a695640528bb7a67487f8a907";
 
         return url;
@@ -296,6 +296,10 @@ public class SpoonacularQuery {
 
     public ArrayList<String> getIngredients(){
         return ingredients;
+    }
+
+    public void resetIngredients(){
+        ingredients = new ArrayList<String>();
     }
 
     public void performQuery(){
