@@ -3,6 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/signInOutButton"
+        android:layout_width="123dp"
+        android:layout_height="63dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="133dp"
+        android:layout_marginLeft="133dp"
+        android:layout_marginTop="245dp"
+        android:background="@android:color/holo_purple"
+        android:text="Sign In" />
+
     <EditText
         android:id="@+id/username"
         android:layout_width="wrap_content"
@@ -10,9 +23,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="95dp"
-        android:layout_marginLeft="95dp"
-        android:layout_marginTop="135dp"
+        android:layout_marginStart="98dp"
+        android:layout_marginLeft="98dp"
+        android:layout_marginTop="61dp"
         android:ems="10"
         android:inputType="textPersonName" />
 
@@ -25,12 +38,25 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="95dp"
-        android:layout_marginLeft="95dp"
-        android:layout_marginTop="99dp"
+        android:layout_marginStart="98dp"
+        android:layout_marginLeft="98dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="1dp"
         android:layout_marginRight="1dp"
         android:text="Username"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/passwordLabel"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="99dp"
+        android:layout_marginLeft="99dp"
+        android:layout_marginTop="143dp"
+        android:text="Password"
         android:textSize="24sp" />
 
     <EditText
@@ -42,39 +68,13 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="96dp"
-        android:layout_marginLeft="96dp"
-        android:layout_marginTop="253dp"
-        android:layout_marginEnd="101dp"
-        android:layout_marginRight="101dp"
+        android:layout_marginStart="99dp"
+        android:layout_marginLeft="99dp"
+        android:layout_marginTop="179dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginRight="98dp"
         android:ems="10"
         android:inputType="textPassword" />
-
-    <TextView
-        android:id="@+id/passwordLabel"
-        android:layout_width="118dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="96dp"
-        android:layout_marginLeft="96dp"
-        android:layout_marginTop="217dp"
-        android:text="Password"
-        android:textSize="24sp" />
-
-    <Button
-        android:id="@+id/signInOutButton"
-        android:layout_width="123dp"
-        android:layout_height="63dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="130dp"
-        android:layout_marginLeft="130dp"
-        android:layout_marginTop="319dp"
-        android:background="@android:color/holo_purple"
-        android:text="Sign In" />
 
     <Button
         android:id="@+id/createAccountButton"
@@ -83,9 +83,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="130dp"
-        android:layout_marginLeft="130dp"
-        android:layout_marginTop="415dp"
+        android:layout_marginStart="133dp"
+        android:layout_marginLeft="133dp"
+        android:layout_marginTop="341dp"
         android:background="@android:color/holo_green_light"
         android:text="Create Account" />
 

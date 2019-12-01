@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 accountFrag = new AccountFragment();
             fragment = accountFrag;
             q.resetIngredients();
+            favorites = Favorites.OFF;
         }
         else if(tag == "search"){
             if(searchFrag == null)
@@ -216,6 +217,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             searchFrag.getBtnFavorites().setBackground(getResources().getDrawable(R.drawable.favorites_off));
         }
 
+        ArrayList<String[]> queryResults = getQueryResults();
+        addRecipeViews(queryResults);
+
+
     }
     public void toggleFavorites(){
         if(favorites == Favorites.OFF){
@@ -243,10 +248,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void createRecipeFragment(String id){
 
         q.resetIngredients();
+        favorites = Favorites.OFF;
 
         Fragment recipeFragment = new RecipeFragment();
         Bundle args = new Bundle();
         args.putString("id", id);
+
+        if(favorites == Favorites.ON) {
+            args.putString("favorites", "yes");
+        }
+        else{
+            args.putString("favorites", "no");
+        }
 
         recipeFragment.setArguments(args);
 
