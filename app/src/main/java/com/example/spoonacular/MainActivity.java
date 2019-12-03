@@ -248,18 +248,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void createRecipeFragment(String id){
 
         q.resetIngredients();
-        favorites = Favorites.OFF;
 
-        Fragment recipeFragment = new RecipeFragment();
         Bundle args = new Bundle();
+
         args.putString("id", id);
 
         if(favorites == Favorites.ON) {
-            args.putString("favorites", "yes");
+            args.putString("favorited", "yes");
+            favorites = Favorites.OFF;
         }
         else{
-            args.putString("favorites", "no");
+            args.putString("favorited", "no");
         }
+
+        Fragment recipeFragment = new RecipeFragment();
+
 
         recipeFragment.setArguments(args);
 
@@ -396,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
                 String[] userResult = myDb.getUser(userName);
 
-                if(userResult != null && userResult[2].equals(passWord)) {
+                if(userResult != null && userResult.length == 3 && userResult[2].equals(passWord)) {
                     signedInAccount = Integer.parseInt(userResult[0]);
                     setViewEffectsSignIn();
                     toastMessage("Signed in as " + userResult[1]);

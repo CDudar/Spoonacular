@@ -24,6 +24,7 @@ public class RecipeFragment extends Fragment implements View.OnClickListener {
     DatabaseHelper myDB;
     LinearLayout recipeLayout;
     String recipeInfo;
+    Button favoritesBtn;
     boolean favorited;
 
     InteractionListener mListener;
@@ -54,13 +55,18 @@ public class RecipeFragment extends Fragment implements View.OnClickListener {
         Bundle args = getArguments();
 
         id = args.getString("id");
+        String favoritedString = args.getString("favorited");
 
+
+        favorited = false;
+        if(favoritedString.equals("yes")){
+            favorited = true;
+        }
 
         myDB = main.getDBHelper();
 
         recipeLayout = rootView.findViewById(R.id.recipeLayout);
-
-
+        favoritesBtn  = rootView.findViewById(R.id.favoritesBtn);
 
         String title = getTitle(id);
         String keywords = getKeywords(id);
@@ -89,16 +95,10 @@ public class RecipeFragment extends Fragment implements View.OnClickListener {
 //        recipeInfo.setText(title +  ingredients + steps);
 
         if(main.getSignedInAccount() != 0) {
-
-            Button favoritesBtn = new Button(getActivity());
-            favoritesBtn.setWidth(10);
-            favoritesBtn.setHeight(10);
-         //   favoritesBtn.set
-            favoritesBtn.setMaxWidth(10);
+            favoritesBtn.setVisibility(View.VISIBLE);
             favoritesBtn.setGravity(Gravity.RIGHT);
             favoritesBtn.setBackground(getResources().getDrawable(R.drawable.favorites_on));
             favoritesBtn.setOnClickListener(this);
-            recipeLayout.addView(favoritesBtn);
         }
         recipeLayout.addView(titleTextView);
         recipeLayout.addView(keywordTextView);
