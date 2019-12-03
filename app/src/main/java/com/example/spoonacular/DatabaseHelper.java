@@ -292,6 +292,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean inFavorites(String user_id, String recipe_id) {
+        String query = "SELECT DISTINCT "+ DatabaseContract.User_Recipe.RECIPE_ID
+                + " FROM " + DatabaseContract.User_Recipe.TABLE_NAME
+                + " WHERE " + DatabaseContract.User_Recipe.USER_ID + " = " + user_id
+                + " AND " + DatabaseContract.User_Recipe.RECIPE_ID + " = " + recipe_id;
+
+        Log.d("GET_RECIPE_QUERY", query);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+        cursor = db.rawQuery(query, null);
+
+        boolean result = false;
+        if (cursor != null && cursor.moveToFirst()){
+            do {
+                result = true;
+                break;
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return result;
+    }
     // -------- GET QUERIES
     // done
     public ArrayList<String[]> getFavoriteRecipesFromIngredients(String user_id, ArrayList<String> ingredients){
