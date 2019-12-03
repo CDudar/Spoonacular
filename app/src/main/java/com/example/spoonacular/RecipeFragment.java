@@ -55,13 +55,6 @@ public class RecipeFragment extends Fragment implements View.OnClickListener {
         Bundle args = getArguments();
 
         id = args.getString("id");
-        String favoritedString = args.getString("favorited");
-
-
-        favorited = false;
-        if(favoritedString.equals("yes")){
-            favorited = true;
-        }
 
         myDB = main.getDBHelper();
 
@@ -96,8 +89,12 @@ public class RecipeFragment extends Fragment implements View.OnClickListener {
 
         if(main.getSignedInAccount() != 0) {
             favoritesBtn.setVisibility(View.VISIBLE);
-            favoritesBtn.setGravity(Gravity.RIGHT);
-            favoritesBtn.setBackground(getResources().getDrawable(R.drawable.favorites_on));
+            favorited = false;
+            favoritesBtn.setBackground(getResources().getDrawable(R.drawable.favorites_off));
+            if(myDB.inFavorites(String.valueOf(main.getSignedInAccount()), id)){
+                favoritesBtn.setBackground(getResources().getDrawable(R.drawable.favorites_on));
+                favorited = true;
+            }
             favoritesBtn.setOnClickListener(this);
         }
         recipeLayout.addView(titleTextView);
@@ -109,15 +106,17 @@ public class RecipeFragment extends Fragment implements View.OnClickListener {
 
     }
 
-
+    @TargetApi(16)
     public void onClick(View v){
 
         toggleFavorited();
         if(favorited) {
             myDB.addFavoriteRecipe(String.valueOf(main.getSignedInAccount()), id);
+            favoritesBtn.setBackground(getResources().getDrawable(R.drawable.favorites_on));
         }
         else{
             myDB.removeFavoriteRecipe(String.valueOf(main.getSignedInAccount()), id);
+            favoritesBtn.setBackground(getResources().getDrawable(R.drawable.favorites_off));
         }
     }
 

@@ -253,16 +253,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         args.putString("id", id);
 
-        if(favorites == Favorites.ON) {
-            args.putString("favorited", "yes");
-            favorites = Favorites.OFF;
-        }
-        else{
-            args.putString("favorited", "no");
-        }
+        favorites = Favorites.OFF;
 
         Fragment recipeFragment = new RecipeFragment();
-
 
         recipeFragment.setArguments(args);
 
