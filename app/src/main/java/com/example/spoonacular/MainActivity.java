@@ -366,16 +366,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public void createAccount(String userName, String passWord){
 
-        if(userName.length() > 0 && passWord.length() > 0){
             int result = myDb.addUser(userName, passWord);
 
             if (result != -1) toastMessage("Account created");
             else toastMessage("Failed: Username Taken");
 
-        }
-        else{
-            toastMessage("Invalid input");
-        }
     }
 
     public void accountScreenListener(View v) {
@@ -386,6 +381,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         userName.trim();
         passWord.trim();
 
+        if(userName.length() == 0 || passWord.length() ==  0) {
+            toastMessage("Invalid input");
+            return;
+        }
+
         if (v.getId() == (R.id.createAccountButton)) {
             createAccount(userName, passWord);
 
@@ -395,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
                 String[] userResult = myDb.getUser(userName);
 
-                if(userResult != null && userResult.length == 3 && userResult[2].equals(passWord)) {
+                if(userResult != null && userResult.length == 3 && userResult[2] != null && userResult[2].equals(passWord)) {
                     signedInAccount = Integer.parseInt(userResult[0]);
                     setViewEffectsSignIn();
                     toastMessage("Signed in as " + userResult[1]);
