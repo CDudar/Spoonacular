@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -97,7 +98,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(DatabaseContract.Recipe.COOK_TIME, cooktime);
         contentValues.put(DatabaseContract.Recipe.KEYWORD, keywords);
 
-        long result = db.insert(DatabaseContract.Recipe.TABLE_NAME, null, contentValues);
+        long result = -1;
+        try {
+            result = db.insert(DatabaseContract.Recipe.TABLE_NAME, null, contentValues);
+        }catch (SQLiteException exception) {
+            Log.d("SQLite", "addRecipe - Failed");
+        }
 
         if (result == -1){
             return false;
@@ -161,17 +167,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] ing;
         long result1 = -1;
         long result2 = -1;
-        for (int i=0; i < ingredients.size(); i++) {
-            ing = ingredients.get(i);
-            ing_contentValues.put(DatabaseContract.Ingredient.ID, ing[0]);
-            ing_contentValues.put(DatabaseContract.Ingredient.NAME, ing[1]);
-            // add to ingredient table first
-            result1 = db.insert(DatabaseContract.Ingredient.TABLE_NAME, null, ing_contentValues);
-            ing_rec_contentValues.put(DatabaseContract.Ingredient_Recipe.INGREDIENT_ID, ing[0]);
-            ing_rec_contentValues.put(DatabaseContract.Ingredient_Recipe.QUANTITY, ing[2]);
-            // add to ingredient_recipe table
-            result2 = db.insert(DatabaseContract.Ingredient_Recipe.TABLE_NAME, null, ing_rec_contentValues);
+        try {
+            for (int i = 0; i < ingredients.size(); i++) {
+                ing = ingredients.get(i);
+                ing_contentValues.put(DatabaseContract.Ingredient.ID, ing[0]);
+                ing_contentValues.put(DatabaseContract.Ingredient.NAME, ing[1]);
+                // add to ingredient table first
+                result1 = db.insert(DatabaseContract.Ingredient.TABLE_NAME, null, ing_contentValues);
+                ing_rec_contentValues.put(DatabaseContract.Ingredient_Recipe.INGREDIENT_ID, ing[0]);
+                ing_rec_contentValues.put(DatabaseContract.Ingredient_Recipe.QUANTITY, ing[2]);
+                // add to ingredient_recipe table
+                result2 = db.insert(DatabaseContract.Ingredient_Recipe.TABLE_NAME, null, ing_rec_contentValues);
+            }
+        }catch (SQLiteException exception) {
+            Log.d("SQLite", "addIngredientsToRecipe - Failed");
         }
+
 
         if (result1 == -1 && result2 == -1){
             return false;
@@ -265,7 +276,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(DatabaseContract.User_Recipe.USER_ID, user_id);
         contentValues.put(DatabaseContract.User_Recipe.RECIPE_ID, recipe_id);
 
-        long result = db.insert(DatabaseContract.User_Recipe.TABLE_NAME, null, contentValues);
+        long result = -1;
+        try {
+            result = db.insert(DatabaseContract.User_Recipe.TABLE_NAME, null, contentValues);
+        }catch (SQLiteException exception) {
+            Log.d("SQLite", "addIngredientsToRecipe - Failed");
+        }
 
         if (result == -1){
             return false;

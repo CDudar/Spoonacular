@@ -367,8 +367,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void createAccount(String userName, String passWord){
 
         if(userName.length() > 0 && passWord.length() > 0){
-            myDb.addUser(userName, passWord);
-            toastMessage("Account created");
+            int result = myDb.addUser(userName, passWord);
+
+            if (result == -1) toastMessage("Account created");
+            else toastMessage("Failed: Username Taken");
+
         }
         else{
             toastMessage("Invalid input");
